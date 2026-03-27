@@ -20,7 +20,7 @@ export default async function AffiliateDashboardLayout({ children }: { children:
         where: eq(affiliates.userId, dbUser.id)
     })
     if (!dbAffiliate) {
-        redirect("/sign-in")
+        redirect("/discover")
     }
     return (
         <div>

@@ -1,13 +1,10 @@
 "use client"
 
 import { orpc } from "@/lib/orpc";
-import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { PostInput } from "./PostInput";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentGroupQuery } from "../../../_components/hooks/useCurrentGroupQuery";
 import { PostItem } from "./PostItem";
-import { usePostLike } from "./hooks/usePostLike";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Loader } from "@hugeicons/core-free-icons";
@@ -55,8 +52,6 @@ export function PostSection({ channelId }: { channelId: string }) {
             </div>
         )
     }
-
-    const channels = group.channels.find(channel => channel.id === channelId)
 
     return (
         <div className="w-full flex flex-col gap-5 h-full">

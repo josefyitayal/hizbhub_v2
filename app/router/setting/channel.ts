@@ -1,9 +1,9 @@
 import z from "zod";
 import db from "@/db/drizzle";
-import { channels, ChannelSchema, groups, GroupSchema } from "@/db/schemas";
+import { channels, ChannelSchema } from "@/db/schemas";
 import { base } from "@/app/middlewares/base";
 import { requiredAuthMiddleware } from "@/app/middlewares/auth";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { postPermissionEnum, replayPermissionEnum } from "@/zod-schema/createChannelZodSchema";
 
 export const listChannelSettings = base
@@ -21,7 +21,7 @@ export const listChannelSettings = base
             .select()
             .from(channels)
             .where(eq(channels.groupId, input.groupId))
-        orderBy: [asc(channels.createdAt)]
+            .orderBy(asc(channels.createdAt))
 
         if (!result) throw errors.NOT_FOUND()
 

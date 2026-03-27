@@ -22,12 +22,6 @@ export default function ChannelList() {
 
     const { setCurrentChannel } = useGroup()
 
-    // useEffect(() => {
-    //     if (!group.isMember) {
-    //         router.replace(`/g/${group.slug}`)
-    //     }
-    // }, [group.isMember, group.slug, router])
-
     const params = useParams<{ channelId: string }>()
     const urlChannelId = params.channelId
 

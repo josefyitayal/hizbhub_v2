@@ -1,6 +1,5 @@
 "use client"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,10 +18,8 @@ import Underline from "@tiptap/extension-underline";
 import Placeholder from '@tiptap/extension-placeholder'; // Import the extension
 import { Toggle } from "@/components/ui/toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { User } from "@/db/schemas";
 import { Bold, ImageIcon, Italic, List, ListOrdered } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useCurrentGroupQuery } from "../../../_components/hooks/useCurrentGroupQuery";
 import { useGroup } from "../../../_components/context/GroupContext";
 
 export function PostInput() {

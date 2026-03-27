@@ -5,7 +5,6 @@ import db from "@/db/drizzle";
 import { and, eq } from "drizzle-orm";
 import { likes, LikeSchema } from "@/db/schemas";
 
-
 export const createLike = base
     .use(requiredAuthMiddleware)
     .route({
@@ -66,7 +65,6 @@ export const deleteLike = base
         if (!input.postId && !input.commentId) {
             throw new Error("Either postId or commentId must be provided");
         }
-
 
         // delete like
         const [newLike] = await db

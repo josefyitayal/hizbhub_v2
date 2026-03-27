@@ -18,14 +18,28 @@ import {
 } from "@/components/ui/table"
 import { maskEmail } from "@/lib/maskEmail";
 import { orpc } from "@/lib/orpc";
-import { useUser } from "@clerk/nextjs";
 import { skipToken, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton"
+
+export function TableLoadingSkeleton() {
+    return (
+        <>
+            {/* Generate 5 skeleton rows */}
+            {Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                    <TableCell><Skeleton className="h-5 w-[150px]" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-[100px]" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-[80px]" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-[60px] rounded-full" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-[50px]" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-[50px]" /></TableCell>
+                </TableRow>
+            ))}
+        </>
+    )
+}
 
 export default function AffiliateReferralsPage() {
-    const { isLoaded, user } = useUser()
-
-    const clerkId = isLoaded ? user?.id ?? null : null
-
     const { data } = useSuspenseQuery(orpc.affiliate.list.core.queryOptions());
 
     const affiliateId = data?.affiliate?.id
@@ -37,10 +51,6 @@ export default function AffiliateReferralsPage() {
                 : skipToken, // ✅ THIS is the missing piece
         })
     )
-
-    if (!isLoaded) {
-        return <div>Loading</div>
-    }
 
     if (!data?.affiliate) {
         return <div>No affiliate data</div>
@@ -71,20 +81,31 @@ export default function AffiliateReferralsPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {commissions?.map((comm) => (
-                                    <TableRow key={comm.id}>
-                                        <TableCell className="flex-1">
-                                            <div className="font-medium">{maskEmail(comm.buyerUser?.email!)}</div>
-                                        </TableCell>
-                                        <TableCell className="">{comm.group.title}</TableCell>
-                                        <TableCell className="">{comm.billingCycle}</TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline">{comm.status}</Badge>
-                                        </TableCell>
-                                        <TableCell className="">{comm.finalPaidAmount}</TableCell>
-                                        <TableCell className="">{comm.commissionAmount}</TableCell>
-                                    </TableRow>
-                                ))}
+                                {/* 1. LOADING STATE */}
+                                {commissions === undefined ? (
+                                    <TableLoadingSkeleton />
+                                ) : /* 2. EMPTY STATE */
+                                    commissions.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                                                No commissions found.
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        /* 3. DATA STATE */
+                                        commissions.map((comm) => (
+                                            <TableRow key={comm.id}>
+                                                <TableCell className="font-medium">{maskEmail(comm.buyerUser?.email!)}</TableCell>
+                                                <TableCell>{comm.group.title}</TableCell>
+                                                <TableCell>{comm.billingCycle}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant="outline">{comm.status}</Badge>
+                                                </TableCell>
+                                                <TableCell>{comm.finalPaidAmount}</TableCell>
+                                                <TableCell>{comm.commissionAmount}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
                             </TableBody>
                         </Table>
                     </CardContent>

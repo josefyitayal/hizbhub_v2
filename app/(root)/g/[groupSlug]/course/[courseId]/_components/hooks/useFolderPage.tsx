@@ -59,7 +59,6 @@ const createOptimisticFolder = (courseId: string, name: string, tempId: string):
 export function useFolderPageMutations(courseId: string) {
     const queryClient = useQueryClient();
     const router = useRouter(); // 👈 Added
-    const searchParams = useSearchParams(); // 👈 Added
     const courseQueryKey = orpc.course.list.byId.queryKey({ input: { courseId } })
 
     // --- Helper function for optimistic state update ---

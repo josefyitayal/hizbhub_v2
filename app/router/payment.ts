@@ -4,10 +4,9 @@ import { eq } from "drizzle-orm";
 import db from "@/db/drizzle";
 import { requiredAuthMiddleware } from "../middlewares/auth";
 import { base } from "../middlewares/base";
-import { MergedErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import { formatTelebirrMask } from "@/lib/formatTelebirrMask";
 import { DbClient } from "@/db/types";
-import { errorsType, telebirrApiResponseType } from "@/types/globals";
+import { errorsType } from "@/types/globals";
 import { createGroupFormSchema, CreateGroupFormTypes } from "@/zod-schema/createGroupZodSchema";
 import { affiliateCommission, affiliates, channels, ChannelSchema, courseSubscriptions, CourseSubscriptionSchema, discountCodes, groups, GroupSchema, groupSubscriptions, GroupSubscriptionSchema, members, orders, Plan, plans, subscriptions } from "@/db/schemas";
 import { telebirrVerify } from "@/actions/telebirrVerify";
@@ -33,6 +32,7 @@ type CreateGroupArgs = {
     input: CreateGroupFormTypes;
     userId: string;
     errors: errorsType;
+    isTrial?: boolean;
 };
 
 const createGroupWithDefaults = async ({
@@ -40,6 +40,7 @@ const createGroupWithDefaults = async ({
     input,
     userId,
     errors,
+    isTrial
 }: CreateGroupArgs) => {
     const [group] = await tx
         .insert(groups)
@@ -49,6 +50,7 @@ const createGroupWithDefaults = async ({
             description: input.description,
             ownerId: userId,
             category: [input.category],
+            private: isTrial ? true : false
         })
         .returning();
 
@@ -149,7 +151,6 @@ export const creatingGroupPayment = base
     .input(creatingGroupPaymentInput)
     .output(successResponseSchema)
     .handler(async ({ input, context, errors }) => {
-        console.log("hello nigga")
         const [plan] = await db.select().from(plans).where(eq(plans.id, input.planId));
 
         if (!plan) {
@@ -158,10 +159,8 @@ export const creatingGroupPayment = base
             });
         }
 
-        console.log("verifyReceiptNotUsed")
         await verifyReceiptNotUsed(input.receiptNumber, errors);
 
-        console.log("discountData")
         const discountData = input.discountCode
             ? await validateDiscountForPlan({
                 code: input.discountCode,
@@ -174,13 +173,12 @@ export const creatingGroupPayment = base
         const isFreeWithDiscount = !!discountData && finalAmount === 0;
 
         if (!isFreeWithDiscount) {
-            console.log("telebirrVerify")
             const { data, success: telebirrSuccess, message: telebirrMessage } = await telebirrVerify(input.receiptNumber);
-            console.log("telebirrVerify message", telebirrMessage)
+
             if (!telebirrSuccess) {
                 throw errors.NOT_FOUND({ message: telebirrMessage })
             }
-            console.log("verifyPayment")
+
             const { success, message } = verifyPayment(
                 data.data,
                 formatTelebirrMask(process.env.MY_TELEBIRR_PHONE_NUMBER!),
@@ -199,13 +197,11 @@ export const creatingGroupPayment = base
             finalAffiliateId = null;
         }
 
-        console.log("i think this is the error started from")
         return await db.transaction(async (tx) => {
-            console.log("hello")
+
             const now = new Date();
             const activeUntil = calculatePeriodEnd(now, plan.billingInterval);
 
-            console.log(2)
             // A. Create Group
             const created = await createGroupWithDefaults({
                 tx: tx, // Pass the transaction object!
@@ -214,8 +210,6 @@ export const creatingGroupPayment = base
                 errors,
             });
 
-
-            console.log(3)
             // B. Create Subscription
             await tx.insert(subscriptions).values({
                 groupId: created.group.id,
@@ -232,7 +226,6 @@ export const creatingGroupPayment = base
             });
 
 
-            console.log(4)
             // C. Create Order
             const [dbOrder] = await tx.insert(orders).values({
                 userId: context.user.id,
@@ -242,7 +235,6 @@ export const creatingGroupPayment = base
                 finalAmount: finalAmount,
             }).returning();
 
-            console.log(5)
 
             // D. Handle Commission (Only if money was paid)
             // We usually don't pay commission on $0 orders unless you want to reward free signups
@@ -307,6 +299,7 @@ export const startTrial = base
             input: input.group,
             userId: context.user.id,
             errors,
+            isTrial: true
         });
 
         await db.insert(subscriptions).values({
@@ -343,7 +336,6 @@ export const payForJoiningGroup = base
     .input(payForJoiningGroupInput)
     .output(GroupSubscriptionSchema)
     .handler(async ({ input, context, errors }) => {
-        console.log("procedure hit")
         const existing = await db
             .select()
             .from(groupSubscriptions)
@@ -356,21 +348,11 @@ export const payForJoiningGroup = base
         }
 
         try {
-            // const data = await telebirrVerify(input.receiptNumber);
-            // console.log(data, "*********")
-            // const { success, message } = verifyPayment(
-            //     data.data,
-            //     formatTelebirrMask(input.phoneNumber),
-            //     input.paidAmount
-            // )
-
-
             const { data, success: telebirrSuccess, message: telebirrMessage } = await telebirrVerify(input.receiptNumber);
-            console.log("telebirrVerify message", telebirrMessage)
             if (!telebirrSuccess) {
                 throw errors.NOT_FOUND({ message: telebirrMessage })
             }
-            console.log("verifyPayment")
+
             const { success, message } = verifyPayment(
                 data.data,
                 formatTelebirrMask(input.phoneNumber),
@@ -381,13 +363,11 @@ export const payForJoiningGroup = base
                 throw errors.NOT_FOUND({ message: message })
             }
         } catch (error) {
-            console.error(error, "===========asdfasdf")
             throw errors.BAD_REQUEST({
                 message: "Could not verify payment. Please double-check the receipt number.",
             });
         }
 
-        console.log("inserting group subscriptions")
         const [result] = await db.insert(groupSubscriptions).values({
             userId: context.user.id,
             groupId: input.groupId,
@@ -398,7 +378,7 @@ export const payForJoiningGroup = base
 
         if (!result) throw errors.NOT_FOUND()
 
-        console.log("succesfull")
+
         return result;
     });
 

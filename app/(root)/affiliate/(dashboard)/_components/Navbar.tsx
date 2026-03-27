@@ -2,18 +2,9 @@
 
 import Link from "next/link";
 import {
-    CircleUser,
     Menu,
     Package2,
 } from "@hugeicons/core-free-icons"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button";
 import CopyLink from "./CopyLink";
@@ -24,11 +15,7 @@ import { orpc } from "@/lib/orpc";
 import { useUser } from "@clerk/nextjs";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserDropdownMenu } from "@/app/(root)/g/[groupSlug]/_components/UserDropdownMenu";
-
-type AffiliateNavbarProps = {
-    tier: "CREATOR" | "REGULAR" | undefined,
-    affiliateSlug: string | undefined
-}
+import { Skeleton } from "@/components/ui/skeleton";
 
 const links = [
     {
@@ -53,10 +40,6 @@ export function AffiliateNavbar() {
         ...orpc.affiliate.list.core.queryOptions(),
         enabled: isLoaded && !!user,
     })
-
-    if (!isLoaded) {
-        return <div>Loading...</div>
-    }
 
     return (
         <header className="sticky top-0 flex h-16 items-center gap-4 border-b border-border bg-background px-4 md:px-6">
@@ -118,7 +101,11 @@ export function AffiliateNavbar() {
             </Sheet>
             <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                 <form className="ml-auto flex-1 sm:flex-initial">
-                    <CopyLink value={`http://localhost:3000?ref=${data?.affiliate.referralCode}`} />
+                    {data?.affiliate.referralCode ? (
+                        <CopyLink value={`${process.env.NEXT_PUBLIC_SITE_URL}?ref=${data?.affiliate.referralCode}`} />
+                    ) : (
+                        <Skeleton className="w-full h-full rounded-lg max-w-md" />
+                    )}
                 </form>
                 <UserDropdownMenu />
             </div>

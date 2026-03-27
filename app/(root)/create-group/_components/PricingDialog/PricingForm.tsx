@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { usePricing } from "./PricingContext"
-import { DiscountCode, Plan } from "@/db/schemas"
+import { Plan } from "@/db/schemas"
 import { orpc } from "@/lib/orpc"
 import { useState } from "react"
 import { DiscountVerification } from "@/zod-schema/discountVerificationSchema"
@@ -44,11 +44,9 @@ export const PricingForm = () => {
     const paymentMutation = useMutation(orpc.payment.creatingGroup.mutationOptions({
         onSuccess: ({ group, channel }) => {
             toast.success(`Group ${group.title} created successfully`)
-            // queryClient.invalidateQueries({
-            //     queryKey: orpc.group.list.ownGroups.queryKey()
-            // })
+
             paymentForm.reset()
-            // setDiscountDetails(null)
+
             setStep("pricing");
             setOpen(false);
             router.push(`/g/${group.slug}/community/${channel.id}`)

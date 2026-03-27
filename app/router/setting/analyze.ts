@@ -1,6 +1,6 @@
 import z from "zod";
 import db from "@/db/drizzle";
-import { channels, ChannelSchema, courseSubscriptions, groups, GroupSchema, groupSubscriptions, members, plans, PlanSchema, subscriptions, SubscriptionSchema } from "@/db/schemas";
+import { courseSubscriptions, groupSubscriptions, members } from "@/db/schemas";
 import { base } from "@/app/middlewares/base";
 import { requiredAuthMiddleware } from "@/app/middlewares/auth";
 import { and, eq, gte, sql } from "drizzle-orm";

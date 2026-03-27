@@ -1,20 +1,18 @@
 "use client"
 
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { affiliateOnboardingFormSchema, affiliateOnboardingFormTypes } from "@/zod-schema/affiliateOnboardingZodSchema";
-import { useUser } from "@clerk/nextjs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Info } from "@hugeicons/core-free-icons";
-import { useEffect } from "react";
 
 const ReferralCodeInfo = () => {
     return (
@@ -33,9 +31,8 @@ const ReferralCodeInfo = () => {
 
 export default function AffiliateOnboarding() {
     const { creatorCode } = useParams<{ creatorCode: string }>()
-    const { user } = useUser()
     const router = useRouter()
-    // 661563b8-7578-4ac7-bb97-5ea01088e1d8
+
     const { data, isLoading } = useQuery(orpc.creatorCode.check.queryOptions({ input: { code: creatorCode } }))
 
     const form = useForm<affiliateOnboardingFormTypes>({

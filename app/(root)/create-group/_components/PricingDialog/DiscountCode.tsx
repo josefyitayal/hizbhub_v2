@@ -43,7 +43,6 @@ export function DiscountCodeButton({ planId, appliedDiscount, onApplied, setAffi
         if (planId && !appliedDiscount && !hasAutoApplied) {
             setIsLoading(true)
             const cookieValue = getCookie("hizb_affiliate");
-            console.log(cookieValue, "============")
             if (cookieValue) {
                 try {
                     const affiliateData = JSON.parse(cookieValue);

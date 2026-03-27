@@ -1,7 +1,5 @@
 import { onboardingSchema } from "@/zod-schema/onboardingZodSchema";
-import { requiredAuthMiddleware } from "../middlewares/auth";
 import { base } from "../middlewares/base";
-import { z } from "zod"
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import db from "@/db/drizzle";
 import { users, UserSchema } from "@/db/schemas";

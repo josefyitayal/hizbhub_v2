@@ -5,6 +5,7 @@ import { Check, Copy, User } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { toast } from "sonner";
 
 interface CopyLinkProps {
     value: string;
@@ -21,7 +22,7 @@ export default function CopyLink({ value, isCreator = true }: CopyLinkProps) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
-            console.error("Failed to copy!", err);
+            toast.error("Faild to copy");
         }
     };
 

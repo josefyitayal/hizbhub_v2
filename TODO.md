@@ -12,8 +12,12 @@
 [x] group sidebar list redirect to @
 [x] the setting redirecting to @ 
 [x] when leaving a group the alert dialog message to change
-- something wrong with telebirr verify
-- description input are wrong character displayed on it
-- the course title need to have more characters
-- course sidebar have wrong glitches
-- affiliate chart ui need to change 
+[o] something wrong with telebirr verify
+[x] description input are wrong character displayed on it
+[x] the course title need to have more characters
+[x] course sidebar have wrong glitches
+[x] affiliate chart ui need to change 
+[x] search group group icon have color even tho the group have there own icon
+[x] in course creation description field the limited character diplayed is not correct
+[x] trial groups private need to be false and user can not change that as long as there are trial
+

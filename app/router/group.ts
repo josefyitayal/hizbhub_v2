@@ -1,8 +1,8 @@
 import db from "@/db/drizzle";
 import { base } from "../middlewares/base";
 import { z } from "zod"
-import { and, arrayOverlaps, countDistinct, desc, eq, lt, or, SQL, sql } from "drizzle-orm";
-import { ChannelSchema, Group, groups, GroupSchema, members, MemberSchema, subscriptions, SubscriptionSchema, users } from "@/db/schemas";
+import { and, arrayOverlaps, desc, eq, lt, or, SQL, sql } from "drizzle-orm";
+import { ChannelSchema, Group, groups, GroupSchema, members, MemberSchema, subscriptions, SubscriptionSchema } from "@/db/schemas";
 import { requiredAuthMiddleware } from "../middlewares/auth";
 import { revalidatePath } from "next/cache";
 
@@ -187,17 +187,14 @@ export const listGroupInDiscover = base
     )
     .handler(async ({ input }) => {
         const { search, category, tags, cursor, limit, top } = input;
-        console.log("hello hello")
 
         const whereClauses: SQL[] = [eq(groups.private, false)];
 
-        console.log("category")
         // 1. Optimized Category Filter (Uses GIN index if you have one)
         if (category) {
             whereClauses.push(sql`${groups.category} @> array[${category}]::text[]`);
         }
 
-        console.log("search")
         // 2. High-Performance Search (Title + Description + Tags)
         if (search) {
             whereClauses.push(
@@ -216,10 +213,8 @@ export const listGroupInDiscover = base
             );
         }
 
-        console.log("tags")
         if (tags) whereClauses.push(arrayOverlaps(groups.tags, [tags]));
 
-        console.log("cursor")
         // 3. Dynamic Cursor Pagination
         if (cursor) {
             if (top) {
@@ -232,10 +227,7 @@ export const listGroupInDiscover = base
             }
         }
 
-        console.log("db")
         try {
-            const countSql = sql`(SELECT count(*) FROM ${members} WHERE ${members.groupId} = ${groups.id})`;
-
             const result = await db
                 .select({
                     group: groups,
@@ -256,25 +248,21 @@ export const listGroupInDiscover = base
                 // )
                 .limit(limit + 1);
 
-            console.log("nextCursor")
             // handle pagination
             let nextCursor: string | null = null;
             let items = result;
 
-            console.log("length")
             if (result.length > limit) {
                 const last = result.pop()!;
                 nextCursor = last.group.createdAt.toISOString();
                 items = result;
             }
 
-            console.log("final")
             const final = items.map(({ group, memberCount }) => ({
                 ...group,
                 memberCount,
             }));
 
-            console.log("return")
             return { items: final, nextCursor };
         } catch (error) {
             console.error("DATABASE_ERROR:", error); // This will show in your terminal

@@ -2,19 +2,15 @@
 
 import { getAvatar } from "@/lib/get-avatar"
 import { orpc } from "@/lib/orpc"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import dayjs from "dayjs"
 import Image from "next/image"
-import { useParams, useRouter } from "next/navigation"
 import { useCurrentGroupQuery } from "../../_components/hooks/useCurrentGroupQuery"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Calendar } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 export function MembersList() {
-    const { groupSlug } = useParams<{ groupSlug: string }>()
-    const router = useRouter()
-
     const { data: { group } } = useCurrentGroupQuery()
 
     const { data: members, isLoading } = useQuery(orpc.member.list.byGroupSlug.queryOptions({

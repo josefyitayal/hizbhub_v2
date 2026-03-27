@@ -15,13 +15,11 @@ import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from 
 import { Switch } from "@/components/ui/switch"
 import { orpc } from "@/lib/orpc"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { useParams, useRouter } from "next/navigation"
 import { Course } from "@/db/schemas"
 import { createCourseFormSchema, createCourseFormSchemaTypes } from "@/zod-schema/createCourseZodSchema"
-import { useCurrentGroupQuery } from "../../_components/hooks/useCurrentGroupQuery"
 import { useEffect, useMemo, useState, useCallback } from "react"
 import { ImageUploader } from "@/components/ImageUploader"
 
@@ -204,7 +202,7 @@ export function CourseFormDialog({
                                         />
                                         <InputGroupAddon align="block-end">
                                             <InputGroupText className="tabular-nums">
-                                                {(field.value?.length ?? 0)}/100 characters
+                                                {(field.value?.length ?? 0)}/200 characters
                                             </InputGroupText>
                                         </InputGroupAddon>
                                     </InputGroup>

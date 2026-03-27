@@ -5,21 +5,71 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom Scrollbar Utility */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { 
+    background: rgba(255,255,255,0.1); 
+    border-radius: 10px; 
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Custom scrollbar for the folders list */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 /* Container that hides the "overflowing" parts of the video */
 .yt-clean-embed-container {
-    overflow: hidden;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
 }
 
 /* The actual iframe, scaled up to push the top title bar out of view */
 .yt-clean-embed {
-    width: 110% !important;  /* Zoom in slightly */
-    height: 110% !important;
-    margin-left: -5%;        /* Re-center horizontally */
-    margin-top: -5%;         /* Re-center vertically to hide the top bar */
-    pointer-events: none;    /* Optional: prevents clicking to open */ 
+  width: 110% !important;
+  /* Zoom in slightly */
+  height: 110% !important;
+  margin-left: -5%;
+  /* Re-center horizontally */
+  margin-top: -5%;
+  /* Re-center vertically to hide the top bar */
+  pointer-events: none;
+  /* Optional: prevents clicking to open */
 }
 
 @layer components {

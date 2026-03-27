@@ -1,9 +1,9 @@
 import z from "zod";
 import db from "@/db/drizzle";
-import { channels, ChannelSchema, groups, GroupSchema, plans, PlanSchema, subscriptions, SubscriptionSchema } from "@/db/schemas";
+import { plans, PlanSchema, subscriptions, SubscriptionSchema } from "@/db/schemas";
 import { base } from "@/app/middlewares/base";
 import { requiredAuthMiddleware } from "@/app/middlewares/auth";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export const listBillingSettings = base
     .use(requiredAuthMiddleware)

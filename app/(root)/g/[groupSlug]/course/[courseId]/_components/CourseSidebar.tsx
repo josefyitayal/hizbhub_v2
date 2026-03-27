@@ -1,14 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import z from "zod";
-import { motion } from "framer-motion";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { CourseSchema, FolderSchema, PageComplateSchema, PageSchema } from "@/db/schemas";
 import { useCurrentGroupQuery } from "../../../_components/hooks/useCurrentGroupQuery";
@@ -17,6 +15,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useFolderPageMutations } from "./hooks/useFolderPage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Define a consistent height class for sidebar items
 const ITEM_HEIGHT_CLASS = "h-9";
@@ -150,11 +149,9 @@ export function CourseSidebar({ courseId }: { courseId: string }) {
     }
 
     return (
-        // 🎬 Cinematic Monochrome Studio-Light Sidebar
-        <div className="flex-[0.3] min-w-2xs h-full flex flex-col gap-6 p-5 border-r border-border bg-sidebar relative overflow-hidden">
-
+        <div className="h-full min-w-0 flex flex-col gap-3 p-5 border-r border-border bg-sidebar overflow-hidden">
             {/* Course Header */}
-            <div className="flex flex-col gap-3 flex-shrink-0"> {/* Added flex-shrink-0 to keep header fixed */}
+            <div className="flex flex-col gap-3 flex-shrink-0">
                 <div className="flex items-center gap-4">
                     <Button
                         onClick={() => router.replace(`/g/${groupSlug}/course`)}
@@ -162,7 +159,7 @@ export function CourseSidebar({ courseId }: { courseId: string }) {
                     >
                         <HugeiconsIcon icon={ArrowLeft} size={10} />
                     </Button>
-                    <p className="text-lg font-semibold truncate">
+                    <p className="text-lg font-semibold truncate min-w-0">
                         {course?.name}
                     </p>
                 </div>
@@ -176,153 +173,167 @@ export function CourseSidebar({ courseId }: { courseId: string }) {
                 </div>
             </div>
 
+            <div className="flex items-center justify-between flex-shrink-0">
+                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Folders</p>
+                {isUserOwned && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 p-0 rounded-md hover:bg-white/5"
+                        onClick={() => onAddFolder({ courseId, name: 'New Folder' })}
+                    >
+                        <HugeiconsIcon icon={Plus} className="w-4 h-4 text-muted-foreground" />
+                    </Button>
+                )}
+            </div>
+
             {/* Folder Section */}
-            <div className="flex-1 min-h-0 flex flex-col relative z-10 mt-2 overflow-hidden">
-                {/* Fixed Header */}
-                <div className="flex items-center justify-between mb-4 flex-shrink-0">
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Folders</p>
-                    {isUserOwned && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 p-0 rounded-md hover:bg-white/5"
-                            onClick={() => onAddFolder({ courseId, name: 'New Folder' })}
-                        >
-                            <HugeiconsIcon icon={Plus} className="w-4 h-4 text-muted-foreground" />
-                        </Button>
-                    )}
-                </div>
-
+            <div className="flex-1 min-h-0 w-full overflow-hidden flex flex-col">
                 {/* Scrollable folders list */}
-                <div className="flex-1 min-h-0">
-                    <ScrollArea className="h-full w-full">
-                        <div className="flex flex-col gap-1 pr-4 pb-12">
-                            {course?.folders.map(folder => (
-                                <Collapsible
-                                    key={folder.id}
-                                    open={openFolderIds.has(folder.id)}
-                                    onOpenChange={(open) => handleCollapsibleChange(folder.id, open)}
-                                >
-                                    {/* Folder Row */}
-                                    <div className={`flex items-center justify-between ${ITEM_HEIGHT_CLASS} px-2 rounded-md transition group bg-white/[0.02] hover:bg-white/[0.05]`}>
-                                        <div className="flex items-center gap-1 min-w-0 grow">
-                                            <CollapsibleTrigger asChild className="cursor-pointer group">
-                                                <Button variant="ghost" size="icon" className="size-6 p-0">
-                                                    <HugeiconsIcon icon={ChevronRight} className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-90 text-muted-foreground" />
-                                                </Button>
-                                            </CollapsibleTrigger>
+                <ScrollArea className="h-full w-full min-w-0 overflow-x-hidden">
+                    {course?.folders.map(folder => {
+                        const isOpen = openFolderIds.has(folder.id);
+                        return (
+                            <div key={folder.id} className="w-full min-w-0 max-w-full overflow-hidden">
+                                {/* --- FOLDER ROW --- */}
+                                <div className={`flex items-center w-full min-w-0 ${ITEM_HEIGHT_CLASS} px-2 rounded-md transition group bg-white/[0.02] hover:bg-white/[0.05] overflow-hidden`}>
+                                    {/* left: chevron + name (must be shrinkable for truncation) */}
+                                    <div className="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
+                                        {/* Trigger button - now a regular Button that toggles state */}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-6 p-0 shrink-0 cursor-pointer"
+                                            onClick={() => handleCollapsibleChange(folder.id, !isOpen)}
+                                        >
+                                            <HugeiconsIcon
+                                                icon={ChevronRight}
+                                                className="h-4 w-4 transition-transform duration-300 text-muted-foreground"
+                                                style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                                            />
+                                        </Button>
 
-                                            {editingFolderId === folder.id ? (
-                                                <Input
-                                                    value={tempName}
-                                                    onChange={(e) => setTempName(e.target.value)}
-                                                    className="h-7 px-2 py-0 text-xs"
-                                                    onBlur={() => handleFolderRename(folder)}
-                                                    onKeyDown={(e) => e.key === 'Enter' && handleFolderRename(folder)}
-                                                    autoFocus
-                                                />
-                                            ) : (
-                                                <span
-                                                    className="font-medium cursor-pointer text-xs tracking-wide truncate grow min-w-0 text-muted-foreground"
-                                                    onDoubleClick={() => isUserOwned && startFolderRename(folder)}
-                                                >
-                                                    {folder.name}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {isUserOwned && (
-                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition flex-shrink-0">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-6 w-6 hover:bg-white/5"
-                                                    onClick={() => onAddPage({ folderId: folder.id, name: 'Untitled Page', content: 'New Page created!' })}
-                                                >
-                                                    <HugeiconsIcon icon={Plus} className="h-3.5 w-3.5 text-white/60" />
-                                                </Button>
-                                                <Button
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    className="h-6 w-6 hover:bg-white/5"
-                                                    onClick={() => onDeleteFolder({ id: folder.id })}
-                                                >
-                                                    <HugeiconsIcon icon={Trash2} className="h-3.5 w-3.5 text-muted-foreground" />
-                                                </Button>
-                                            </div>
+                                        {editingFolderId === folder.id ? (
+                                            <Input
+                                                value={tempName}
+                                                onChange={(e) => setTempName(e.target.value)}
+                                                className="h-7 px-2 py-0 text-xs w-full min-w-0"
+                                                onBlur={() => handleFolderRename(folder)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleFolderRename(folder)}
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            <span
+                                                className="block font-medium cursor-pointer text-xs min-w-0 max-w-full overflow-hidden whitespace-nowrap text-ellipsis text-muted-foreground"
+                                                onDoubleClick={() => isUserOwned && startFolderRename(folder)}
+                                            >
+                                                {folder.name}
+                                            </span>
                                         )}
                                     </div>
 
-                                    <CollapsibleContent className="overflow-hidden">
+                                    {/* right: action buttons */}
+                                    {isUserOwned && (
+                                        <div className="flex items-center gap-1 flex-none ml-auto opacity-0 group-hover:opacity-100 transition">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 hover:bg-white/5 shrink-0"
+                                                onClick={() => onAddPage({ folderId: folder.id, name: 'Untitled Page', content: 'New Page created!' })}
+                                            >
+                                                <HugeiconsIcon icon={Plus} className="h-3.5 w-3.5 text-white/60" />
+                                            </Button>
+                                            <Button
+                                                variant="destructive"
+                                                size="icon"
+                                                className="h-6 w-6 hover:bg-white/5 shrink-0"
+                                                onClick={() => onDeleteFolder({ id: folder.id })}
+                                            >
+                                                <HugeiconsIcon icon={Trash2} className="h-3.5 w-3.5 text-muted-foreground" />
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Collapsible content with animation */}
+                                <AnimatePresence initial={false}>
+                                    {isOpen && (
                                         <motion.div
-                                            initial={false}
+                                            key="content"
+                                            initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: 'auto' }}
                                             exit={{ opacity: 0, height: 0 }}
                                             transition={{ duration: 0.2, ease: "easeInOut" }}
-                                            className="space-y-0.5 py-1 pl-3 ml-3 border-l border-white/5"
+                                            className="w-full space-y-0.5 py-1 pl-3 ml-3 border-l border-white/5 overflow-hidden min-w-0"
                                         >
                                             {folder.pages.map(page => {
                                                 const isActive = page.id === currentPageId;
                                                 return (
                                                     <div
                                                         key={page.id}
-                                                        className={`flex items-center justify-between ${ITEM_HEIGHT_CLASS} px-2 pl-6 rounded-md group transition
-                                        ${isActive
+                                                        className={`w-full flex items-center ${ITEM_HEIGHT_CLASS} px-2 pl-6 rounded-md group transition overflow-hidden min-w-0 max-w-full
+                                                        ${isActive
                                                                 ? 'bg-white/10 text-white shadow-[0_0_30px_rgba(255,255,255,0.05)]'
-                                                                : 'hover:bg-white/[0.04] text-white/60'
-                                                            }`}
+                                                                : 'hover:bg-white/[0.04] text-white/60'}`
+                                                        }
                                                     >
-                                                        {editingPageId === page.id ? (
-                                                            <Input
-                                                                value={tempName}
-                                                                onChange={(e) => setTempName(e.target.value)}
-                                                                className="h-7 px-2 py-0 text-xs bg-black/40 border-white/10 text-white"
-                                                                onBlur={() => handlePageRename(page, folder.id)}
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        handlePageRename(page, folder.id);
-                                                                    }
-                                                                }}
-                                                                autoFocus
-                                                            />
-                                                        ) : (
-                                                            <button
-                                                                className={`flex items-center gap-2 text-xs tracking-wide transition truncate grow min-w-0 text-left
-                                                ${isActive ? 'text-white' : 'hover:text-white'}`}
-                                                                onClick={() => router.push(`?page=${page.id}`)}
-                                                                onDoubleClick={() => { if (isUserOwned) startPageRename(page) }}
-                                                            >
-                                                                <HugeiconsIcon icon={FileText} className="h-3.5 w-3.5 opacity-60 flex-shrink-0" />
-                                                                <span className="truncate">{page.name}</span>
-                                                            </button>
-                                                        )}
+                                                        {/* Page Name Zone (Constrained) */}
+                                                        <div className="flex-1 min-w-0 overflow-hidden flex items-center">
+                                                            {editingPageId === page.id ? (
+                                                                <Input
+                                                                    value={tempName}
+                                                                    onChange={(e) => setTempName(e.target.value)}
+                                                                    className="h-7 px-2 py-0 text-xs bg-black/40 border-white/10 text-white w-full min-w-0"
+                                                                    onBlur={() => handlePageRename(page, folder.id)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key === 'Enter') {
+                                                                            e.preventDefault();
+                                                                            handlePageRename(page, folder.id);
+                                                                        }
+                                                                    }}
+                                                                    autoFocus
+                                                                />
+                                                            ) : (
+                                                                <button
+                                                                    className={`flex items-center gap-2 text-xs tracking-wide transition min-w-0 w-full overflow-hidden whitespace-nowrap text-left
+                                                                    ${isActive ? 'text-white' : 'hover:text-white'}`}
+                                                                    onClick={() => router.push(`?page=${page.id}`)}
+                                                                    onDoubleClick={() => { if (isUserOwned) startPageRename(page) }}
+                                                                >
+                                                                    <HugeiconsIcon icon={FileText} className="h-3.5 w-3.5 opacity-60 shrink-0" />
+                                                                    <span className="block min-w-0 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">{page.name}</span>
+                                                                </button>
+                                                            )}
+                                                        </div>
 
-                                                        {page.completions?.some((c) => c.isCompleted) && (
-                                                            <div className="px-2">
-                                                                <HugeiconsIcon icon={CircleCheck} className="text-white/70 size-4" />
-                                                            </div>
-                                                        )}
+                                                        {/* Page Actions Zone */}
+                                                        <div className="flex items-center gap-1 shrink-0 ml-auto flex-none">
+                                                            {page.completions?.some((c) => c.isCompleted) && (
+                                                                <div className="px-1">
+                                                                    <HugeiconsIcon icon={CircleCheck} className="text-white/70 size-4" />
+                                                                </div>
+                                                            )}
 
-                                                        {isUserOwned && (
-                                                            <button
-                                                                onClick={() => onDeletePage({ id: page.id })}
-                                                                className={`h-6 w-6 p-1 rounded-md transition hover:bg-white/5
-                                                ${editingPageId === page.id ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}
-                                                            >
-                                                                <HugeiconsIcon icon={Trash2} className="h-3.5 w-3.5 text-white/50" />
-                                                            </button>
-                                                        )}
+                                                            {isUserOwned && (
+                                                                <button
+                                                                    onClick={() => onDeletePage({ id: page.id })}
+                                                                    className={`h-6 w-6 p-1 rounded-md transition hover:bg-white/5 shrink-0
+                                                                    ${editingPageId === page.id ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}
+                                                                >
+                                                                    <HugeiconsIcon icon={Trash2} className="h-3.5 w-3.5 text-white/50" />
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                )
+                                                );
                                             })}
                                         </motion.div>
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            ))}
-                        </div>
-                    </ScrollArea>
-                </div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        );
+                    })}
+                </ScrollArea>
             </div>
         </div>
     );

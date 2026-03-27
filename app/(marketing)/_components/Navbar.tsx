@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
-const links = ["Features", "Use Cases", "Discover", "Blog", "Pricing", "About"]
+const links = ["Features", "Use Cases", "Discover", "Blog", "Pricing"]
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -25,7 +25,7 @@ export const Navbar = () => {
     return (
         <header
             className={cn(
-                "fixed top-0 left-0 right-0 z-[100] transition-all duration-500",
+                "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-border",
                 isScrolled
                     ? "py-3 bg-black/70 backdrop-blur-xl border-b border-border"
                     : "py-5 bg-transparent"
@@ -33,7 +33,7 @@ export const Navbar = () => {
         >
             {/* Sudden gradient wash (only when scrolled) */}
             {isScrolled && (
-                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_60%)]" />
+                <div className="absolute inset-0 -z-10  bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_60%)]" />
             )}
 
             {/* Subtle grid (appears only when scrolled) */}
@@ -68,7 +68,7 @@ export const Navbar = () => {
                 </Link>
 
                 {/* ================= Desktop Nav ================= */}
-                <nav className="hidden md:flex items-center gap-10">
+                <nav className="hidden md:flex items-center gap-10 ">
                     {links.map((item) => {
                         const href = `/${item.toLowerCase().replace(" ", "-")}`;
                         const isActive = pathname === href;
@@ -94,10 +94,6 @@ export const Navbar = () => {
                                     )}
                                 />
 
-                                {/* active glow dot */}
-                                {isActive && (
-                                    <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]" />
-                                )}
                             </Link>
                         );
                     })}

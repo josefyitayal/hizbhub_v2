@@ -36,19 +36,6 @@ import TiptapImage from '@tiptap/extension-image';
 import { toast } from 'sonner';
 import { HugeiconsIcon } from '@hugeicons/react';
 
-// --- Placeholder for toast and imageCompression (adjust imports as necessary) ---
-// const toast = {
-//     error: (msg: string) => console.error('Toast Error:', msg),
-//     success: (msg: string) => console.log('Toast Success:', msg),
-// };
-// const imageCompression = async (file: File, options: any): Promise<File> => {
-//     console.log('Compressing image...');
-//     return file; // Replace with actual compression logic
-// };
-// Define these based on your actual imports
-
-// -------------------------------------------------------------------------------
-
 
 // Helper component for the Link Button logic (Unchanged)
 const LinkButton: React.FC<{ editor: Editor }> = ({ editor }) => {
@@ -116,7 +103,7 @@ const ImageButton: React.FC<{ editor: Editor }> = ({ editor }) => {
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files: FileList | null = event.target.files;
         const file = files?.[0];
-        console.log(file)
+
         if (!file) return;
 
         // Reset the file input value immediately so the same file can be uploaded again if needed
@@ -127,44 +114,32 @@ const ImageButton: React.FC<{ editor: Editor }> = ({ editor }) => {
         const minHeight = 10;
         const maxSizeMB = 1; // 1MB for compression
 
-        console.log("creating new image")
         const img = new window.Image();
         img.src = URL.createObjectURL(file);
         img.alt = "priview"
 
-        console.log("image onload")
+
         img.onload = async () => {
             if (img.width < minWidth || img.height < minHeight) {
                 toast.error(`Image must be >= ${minWidth}x${minHeight}px`);
                 return;
             }
 
-            console.log("try catch")
             try {
                 setUploading(true);
 
-                console.log("compressing")
-                // const compressed = await imageCompression(file, {
-                //     maxSizeMB,
-                //     maxWidthOrHeight: 1920,
-                //     useWebWorker: true,
-                // });
-
-                console.log("create form data")
                 const fd = new FormData();
                 fd.append("file", file);
 
-                console.log("hitting upload api")
+
                 const res = await fetch("/api/upload", {
                     method: "POST",
                     body: fd
                 });
 
-                console.log("getting the api data")
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || "Upload failed");
 
-                console.log("insert the upload image")
                 // Insert the uploaded image into the editor
                 editor.chain().focus().setImage({ src: data.url }).run();
                 toast.success("Image uploaded successfully!");

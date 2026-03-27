@@ -3,13 +3,9 @@
 import { updateProfilePicture } from "@/actions/updateProfilePicture";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import db from "@/db/drizzle";
-import { users } from "@/db/schemas";
 import { compressImage } from "@/lib/compressImage";
 import { useUser } from "@clerk/nextjs";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { toast } from "sonner";
 

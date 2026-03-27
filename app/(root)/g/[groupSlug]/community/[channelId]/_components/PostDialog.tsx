@@ -1,17 +1,16 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getAvatar } from "@/lib/get-avatar";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import { AnimatePresence, motion } from "framer-motion";
 import { Post, User } from "@/db/schemas";
 import { usePostLike } from "./hooks/usePostLike";
 import { Loader, LoaderCircle, MessageCircle, Share, ThumbsUp } from "@hugeicons/core-free-icons";
@@ -136,11 +135,11 @@ export function PostDialog({ postId }: PostDialogProps) {
 
     async function handleShare() {
         try {
-            const sharableLink = `http://localhost:3000/g/${group.slug}/community/${currentChannel?.id}?p=${postId}`
+            const sharableLink = `${process.env.NEXT_PUBLIC_SITE_URL}/g/${group.slug}/community/${currentChannel?.id}?p=${postId}`
             await navigator.clipboard.writeText(sharableLink);
             toast.success("Link copyed")
         } catch {
-            toast.error("something wrong")
+            toast.error("Faild to copy")
         }
     }
 

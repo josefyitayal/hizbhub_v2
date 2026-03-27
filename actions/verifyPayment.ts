@@ -2,7 +2,6 @@ import { telebirrApiResponseType } from "@/types/globals";
 
 // Function in your backend to verify the payment data
 export function verifyPayment(telebirrApiResponse: telebirrApiResponseType, telebirrNumber: string, expectedAmount: number) {
-    console.log(telebirrApiResponse, "0000000000000")
     // 1. Check status
     if (telebirrApiResponse.transactionStatus !== 'Completed') {
         return { success: false, message: 'Transaction not completed' };

@@ -24,7 +24,7 @@ export default async function PostPage({
     }
 
     return (
-        <main className="max-w-4xl mx-auto p-6">
+        <main className="w-full mx-auto py-36 px-48 bg-background">
             <article className="space-y-8">
                 <div className="space-y-4 text-center">
                     <Badge variant="outline">{post.frontmatter.category}</Badge>
@@ -38,8 +38,8 @@ export default async function PostPage({
                     <Image
                         src={post.frontmatter.thumbnail}
                         alt={`${post.frontmatter.title} thumbnail`}
-                        width={500}
-                        height={500}
+                        width={800}
+                        height={800}
                         className="rounded-lg h-full w-full object-cover"
                     />
                 </div>
@@ -57,7 +57,7 @@ export default async function PostPage({
                         '[&_pre]:shadow-inner',
                         '[&_a]:text-blue-600 [&_a]:underline',
                         '[&_a:hover]:cursor-pointer',
-                        '[&_hr]:my-4',
+                        '[&_hr]:my-4 [&_hr]:border-border',
                         '[&_p]:mb-4',
                         '[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:my-6'
                     )}

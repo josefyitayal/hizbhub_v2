@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+
 import { GroupProvider } from "./_components/context/GroupContext";
 import { GroupListSidebar } from "./_components/GroupListSidebar";
 import { GroupHeader } from "./_components/GroupHeader";
@@ -9,7 +10,6 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { TrialEndDialog } from "./_components/TrialEndDialog";
 import { TrialBanner } from "./_components/TrialBanner";
-import { toast } from "sonner";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 interface GroupLayoutProps {
@@ -62,7 +62,6 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
         redirect(notFound());
     }
 
-    console.log(data.group.isMember, "asdddddd")
 
     // 4. Now 'data' and other flags are accessible here
     return (
@@ -73,7 +72,7 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
                         <GroupListSidebar groupSlug={groupSlug} />
                     </aside>
 
-                    <main className="flex flex-1 flex-col min-w-0 min-h-0">
+                    <main className="flex flex-1 flex-col min-w-0 min-h-0 relative">
                         {trialEnded || subscriptionEnded ? (
                             <TrialEndDialog
                                 open={true}
@@ -90,6 +89,7 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
                                 </div>
                             </>
                         )}
+                        <div id="page-dialog-root" className="absolute inset-0 pointer-events-none" />
                     </main>
 
                     {data.isUserOwned && (

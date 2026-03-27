@@ -2,7 +2,7 @@
 
 import { Plan } from '@/db/schemas';
 import { CreateGroupFormTypes } from '@/zod-schema/createGroupZodSchema';
-import { createContext, useContext, useState, ReactNode, SetStateAction, Dispatch, useMemo, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, SetStateAction, Dispatch, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export type PricingContextType = {

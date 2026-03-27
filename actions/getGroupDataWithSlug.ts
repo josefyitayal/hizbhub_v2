@@ -1,9 +1,8 @@
 "use server"
 
 import db from "@/db/drizzle";
-import { z } from "zod"
-import { sql, eq, and } from "drizzle-orm"
-import { ChannelSchema, groups, GroupSchema, members, subscriptions, users } from "@/db/schemas";
+import { sql, eq } from "drizzle-orm"
+import { groups, subscriptions, users } from "@/db/schemas";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { unstable_cache } from "next/cache";

@@ -1,0 +1,867 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+    BookOpen,
+    Users,
+    DollarSign,
+    LayoutDashboard,
+    Zap,
+    Shield,
+    Globe,
+    ChevronRight,
+    MessageSquare,
+    FolderTree,
+    CreditCard,
+    Settings,
+    BarChart3,
+    Lock,
+    Check,
+    Plus,
+    Minus,
+    GraduationCap,
+    Camera,
+    Code,
+    Briefcase,
+    Dumbbell,
+    Palette,
+    ArrowRight,
+    X
+} from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
+// --- Reusable Components ---
+
+const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={cn("inline-flex items-center rounded-full border border-zinc-800 bg-zinc-900/50 px-2.5 py-0.5 text-xs font-semibold tracking-widest text-zinc-300 uppercase", className)}>
+        {children}
+    </div>
+);
+
+const FeatureCard = ({ icon: Icon, title, description, className }: { icon: any, title: string, description: string, className?: string }) => (
+    <div className={cn("group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 p-8 transition-all hover:border-zinc-700", className)}>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="relative z-10">
+            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-400 group-hover:text-white transition-colors">
+                <Icon className="h-5 w-5" />
+            </div>
+            <h3 className="mb-3 text-lg font-medium text-white">{title}</h3>
+            <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
+        </div>
+    </div>
+);
+
+// --- Page Sections ---
+
+function Navbar({ currentPage, setPage }: { currentPage: string, setPage: (page: string) => void }) {
+    return (
+        <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/50 backdrop-blur-xl">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setPage('features')}>
+                    <div className="flex h-8 w-8 items-center justify-center rounded bg-white text-black">
+                        <div className="h-4 w-4 rounded-sm bg-black" />
+                    </div>
+                    <span className="text-lg font-semibold tracking-tight text-white">HizbHub</span>
+                </div>
+                <div className="hidden items-center gap-8 md:flex">
+                    <button onClick={() => setPage('features')} className={cn("text-sm font-medium transition-colors", currentPage === 'features' ? "text-white" : "text-zinc-400 hover:text-white")}>Features</button>
+                    <button onClick={() => setPage('use-cases')} className={cn("text-sm font-medium transition-colors", currentPage === 'use-cases' ? "text-white" : "text-zinc-400 hover:text-white")}>Use Cases</button>
+                    <button className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Discover</button>
+                    <button onClick={() => setPage('pricing')} className={cn("text-sm font-medium transition-colors", currentPage === 'pricing' ? "text-white" : "text-zinc-400 hover:text-white")}>Pricing</button>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Login</button>
+                    <button className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:bg-zinc-200 transition-colors">
+                        Start Your Hub
+                    </button>
+                </div>
+            </div>
+        </nav>
+    );
+}
+
+function Hero() {
+    return (
+        <section className="relative overflow-hidden pt-32 pb-24">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+            <div className="relative mx-auto max-w-7xl px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col items-center"
+                >
+                    <Badge className="mb-8">The Complete Toolkit</Badge>
+                    <h1 className="mb-6 max-w-4xl text-5xl font-medium tracking-tight text-white sm:text-7xl">
+                        Everything you need. <br />
+                        <span className="text-zinc-500">None of the clutter.</span>
+                    </h1>
+                    <p className="mb-10 max-w-2xl text-lg text-zinc-400">
+                        Replace your fragmented tech stack with one unified platform. HizbHub combines communities, structured courses, and native Ethiopian monetization into a single, high-performance command center.
+                    </p>
+                    <div className="flex flex-col gap-4 sm:flex-row">
+                        <button className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-sm font-medium text-black hover:bg-zinc-200 transition-colors">
+                            Start building for free
+                        </button>
+                        <button className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-800 bg-transparent px-8 text-sm font-medium text-white hover:bg-zinc-900 transition-colors">
+                            View Pricing
+                        </button>
+                    </div>
+                </motion.div>
+            </div>
+        </section>
+    );
+}
+
+function DeepDiveSection({
+    badge,
+    title,
+    description,
+    features,
+    imageContent,
+    reverse = false
+}: {
+    badge: string;
+    title: string;
+    description: string;
+    features: { icon: any, title: string, desc: string }[];
+    imageContent: React.ReactNode;
+    reverse?: boolean;
+}) {
+    return (
+        <section className="py-24 border-t border-white/5">
+            <div className="mx-auto max-w-7xl px-6">
+                <div className={cn("grid gap-16 lg:grid-cols-2 lg:gap-24 items-center", reverse && "lg:grid-flow-col-dense")}>
+                    <motion.div
+                        initial={{ opacity: 0, x: reverse ? 20 : -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                        className={cn(reverse && "lg:col-start-2")}
+                    >
+                        <Badge className="mb-6">{badge}</Badge>
+                        <h2 className="mb-6 text-3xl font-medium tracking-tight text-white sm:text-4xl">{title}</h2>
+                        <p className="mb-12 text-lg text-zinc-400">{description}</p>
+
+                        <div className="space-y-8">
+                            {features.map((feature, i) => (
+                                <div key={i} className="flex gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/50 text-zinc-400">
+                                        <feature.icon className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="mb-1 font-medium text-white">{feature.title}</h4>
+                                        <p className="text-sm text-zinc-400">{feature.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                        className={cn("relative aspect-square lg:aspect-auto lg:h-[600px] rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden flex items-center justify-center p-8", reverse && "lg:col-start-1")}
+                    >
+                        {/* Abstract UI Representation */}
+                        {imageContent}
+                    </motion.div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function CommandDashboard() {
+    return (
+        <section className="py-24 border-t border-white/5 bg-zinc-950/50">
+            <div className="mx-auto max-w-7xl px-6">
+                <div className="mb-16 text-center">
+                    <Badge className="mb-6">The Command Center</Badge>
+                    <h2 className="mb-4 text-3xl font-medium tracking-tight text-white sm:text-4xl">Manage everything from one place.</h2>
+                    <p className="mx-auto max-w-2xl text-zinc-400">A professional dashboard designed for focus. Manage your courses, community, and payments without the context switching.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {/* Card 1: Unified Dashboard (Spans 2 columns) */}
+                    <div className="group relative col-span-1 md:col-span-2 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-8 hover:bg-zinc-900/50 transition-colors">
+                        <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-white/[0.03] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                        <div className="relative z-10 flex h-full flex-col justify-between">
+                            <div className="mb-8 flex h-48 w-full items-center justify-center rounded-xl border border-white/10 bg-black/50 p-4 shadow-2xl">
+                                {/* Mock Dashboard UI */}
+                                <div className="flex h-full w-full gap-4">
+                                    {/* Sidebar */}
+                                    <div className="w-1/4 rounded-lg bg-white/5 p-3 flex flex-col gap-3">
+                                        <div className="h-3 w-full rounded bg-white/10" />
+                                        <div className="h-3 w-3/4 rounded bg-white/5" />
+                                        <div className="h-3 w-5/6 rounded bg-white/5" />
+                                        <div className="mt-auto h-3 w-full rounded bg-white/5" />
+                                    </div>
+                                    {/* Main Content */}
+                                    <div className="flex flex-1 flex-col gap-3">
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between">
+                                            <div className="h-4 w-1/3 rounded bg-white/10" />
+                                            <div className="h-6 w-16 rounded-full bg-white/5" />
+                                        </div>
+                                        {/* Content Grid */}
+                                        <div className="flex gap-3 h-full">
+                                            <div className="flex-1 rounded-lg bg-white/5 border border-white/5 flex flex-col p-3 gap-2">
+                                                <div className="h-2 w-1/2 rounded bg-white/10" />
+                                                <div className="h-6 w-3/4 rounded bg-white/20" />
+                                            </div>
+                                            <div className="flex-1 rounded-lg bg-white/5 border border-white/5 flex flex-col p-3 gap-2">
+                                                <div className="h-2 w-1/2 rounded bg-white/10" />
+                                                <div className="h-6 w-3/4 rounded bg-white/20" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="mb-2 text-xl font-medium text-white">Unified Dashboard</h3>
+                                <p className="text-sm text-zinc-400">Get a bird's-eye view of your entire digital business. Track revenue, active members, and recent engagement in one clean interface.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card 2: Member Management */}
+                    <div className="group relative col-span-1 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-8 hover:bg-zinc-900/50 transition-colors">
+                        <div className="relative z-10 flex h-full flex-col justify-between">
+                            <div className="mb-8 flex h-48 w-full flex-col justify-center gap-3 rounded-xl border border-white/10 bg-black/50 p-6 shadow-2xl">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-2 transition-transform group-hover:translate-x-1" style={{ transitionDelay: `${i * 50}ms` }}>
+                                        <div className="h-6 w-6 shrink-0 rounded-full bg-zinc-800" />
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <div className="h-2 w-1/2 rounded bg-zinc-600" />
+                                            <div className="h-1 w-1/3 rounded bg-zinc-700" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div>
+                                <h3 className="mb-2 text-xl font-medium text-white">Member Management</h3>
+                                <p className="text-sm text-zinc-400">View profiles, track course progress, and handle access control effortlessly.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card 3: Basic Analytics */}
+                    <div className="group relative col-span-1 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-8 hover:bg-zinc-900/50 transition-colors">
+                        <div className="relative z-10 flex h-full flex-col justify-between">
+                            <div className="mb-8 flex h-48 w-full items-end gap-2 rounded-xl border border-white/10 bg-black/50 p-6 shadow-2xl">
+                                {[40, 70, 45, 90, 65, 80].map((h, i) => (
+                                    <div key={i} className="w-full rounded-t-sm bg-zinc-800 transition-all duration-500 group-hover:bg-white/20" style={{ height: `${h}%`, transitionDelay: `${i * 50}ms` }} />
+                                ))}
+                            </div>
+                            <div>
+                                <h3 className="mb-2 text-xl font-medium text-white">Basic Analytics</h3>
+                                <p className="text-sm text-zinc-400">Understand what's working. Track course enrollments and revenue trends over time.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card 4: Secure Auth */}
+                    <div className="group relative col-span-1 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-8 hover:bg-zinc-900/50 transition-colors">
+                        <div className="relative z-10 flex h-full flex-col justify-between">
+                            <div className="mb-8 flex h-48 w-full items-center justify-center rounded-xl border border-white/10 bg-black/50 p-6 shadow-2xl">
+                                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition-transform duration-500 group-hover:scale-110 group-hover:bg-white/10">
+                                    <Lock className="h-6 w-6 text-zinc-400 group-hover:text-white transition-colors" />
+                                    <div className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-black bg-emerald-500" />
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="mb-2 text-xl font-medium text-white">Secure Auth</h3>
+                                <p className="text-sm text-zinc-400">Enterprise-grade security powered by Clerk. Seamless sign-up experience.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card 5: High-Performance (Spans 2 on md, 1 on lg) */}
+                    <div className="group relative col-span-1 md:col-span-2 lg:col-span-1 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-8 hover:bg-zinc-900/50 transition-colors">
+                        <div className="relative z-10 flex h-full flex-col justify-between">
+                            <div className="mb-8 flex h-48 w-full items-center justify-center rounded-xl border border-white/10 bg-black/50 p-6 shadow-2xl">
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-7xl font-medium tracking-tighter text-white transition-all duration-500 group-hover:text-emerald-400">99</span>
+                                    <span className="text-2xl text-zinc-600">ms</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="mb-2 text-xl font-medium text-white">High-Performance</h3>
+                                <p className="text-sm text-zinc-400">Built on Next.js and Vercel. Lightning-fast page loads keep members engaged.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function CTA() {
+    return (
+        <section className="relative overflow-hidden py-32 border-t border-white/5">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_100%,#000_70%,transparent_100%)]" />
+            <div className="relative mx-auto max-w-4xl px-6 text-center">
+                <Badge className="mb-8">Digital Ownership</Badge>
+                <h2 className="mb-6 text-4xl font-medium tracking-tight text-white sm:text-6xl">
+                    Build once. <br />
+                    Own it forever.
+                </h2>
+                <p className="mb-10 text-lg text-zinc-400">
+                    HizbHub is designed for creators who want permanence — not algorithms, feeds, or borrowed attention. Claim your sovereign digital space today.
+                </p>
+                <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <button className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full bg-white px-8 text-sm font-medium text-black hover:bg-zinc-200 transition-colors">
+                        Start your hub <ChevronRight className="ml-2 h-4 w-4" />
+                    </button>
+                    <span className="text-xs tracking-widest text-zinc-500 uppercase">No credit card required</span>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function Footer() {
+    return (
+        <footer className="border-t border-white/5 bg-black py-12">
+            <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-white text-black">
+                        <div className="h-3 w-3 rounded-sm bg-black" />
+                    </div>
+                    <span className="text-sm font-semibold tracking-tight text-white">HizbHub</span>
+                </div>
+                <p className="text-xs text-zinc-500">
+                    © {new Date().getFullYear()} HizbHub Tech PLC. Built for Ethiopian creators.
+                </p>
+            </div>
+        </footer>
+    );
+}
+
+const PricingCard = ({ months, price, title, desc, highlighted, save }: { months: number, price: string, title: string, desc: string, highlighted?: boolean, save?: string }) => (
+    <div className={cn("relative flex flex-col overflow-hidden rounded-3xl border p-8 transition-all hover:-translate-y-1", highlighted ? "border-emerald-500/50 bg-zinc-900/80 shadow-2xl shadow-emerald-900/20" : "border-white/10 bg-zinc-950")}>
+        {highlighted && <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600" />}
+        {highlighted && <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-black mt-4">Most Popular</div>}
+
+        <div className={cn("mb-8", highlighted && "mt-4")}>
+            <h3 className="text-xl font-medium text-white">{title}</h3>
+            <p className="mt-2 text-sm text-zinc-400">{desc}</p>
+        </div>
+        <div className="mb-8">
+            <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-medium tracking-tight text-white">ETB {price}</span>
+            </div>
+            <p className="mt-2 text-sm text-zinc-500">for {months} month{months > 1 ? 's' : ''} access</p>
+            {save && <p className="mt-2 inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400">Save {save}</p>}
+        </div>
+        <ul className="mb-8 flex-1 space-y-4">
+            {['Unlimited Communities', 'Unlimited Courses', '0% Transaction Fees', 'Telebirr Integration', 'Custom Domain', 'Basic Analytics'].map((feature, i) => (
+                <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+                        <Check className="h-3 w-3 text-emerald-500" />
+                    </div>
+                    {feature}
+                </li>
+            ))}
+        </ul>
+        <button className={cn("w-full rounded-full py-3 text-sm font-medium transition-colors", highlighted ? "bg-white text-black hover:bg-zinc-200" : "bg-zinc-900 text-white hover:bg-zinc-800")}>
+            Get Started
+        </button>
+    </div>
+);
+
+const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="border-b border-white/5 py-6">
+            <button onClick={() => setIsOpen(!isOpen)} className="flex w-full items-center justify-between text-left">
+                <span className="text-lg font-medium text-white">{question}</span>
+                {isOpen ? <Minus className="h-5 w-5 text-zinc-400" /> : <Plus className="h-5 w-5 text-zinc-400" />}
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <p className="pt-4 text-zinc-400">{answer}</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+function PricingPage() {
+    const includedFeatures = [
+        { icon: Users, title: "Unlimited Members", desc: "Grow your community without worrying about arbitrary member limits or paywalls." },
+        { icon: BookOpen, title: "Unlimited Courses", desc: "Host as many courses, modules, and lessons as you want. Video hosting included." },
+        { icon: CreditCard, title: "Telebirr Native", desc: "Seamlessly accept payments from millions of Ethiopians via Telebirr." },
+        { icon: Globe, title: "Custom Domain", desc: "Connect your own domain (e.g., academy.yourname.com) for a fully white-labeled experience." },
+        { icon: BarChart3, title: "Deep Analytics", desc: "Track revenue, member engagement, and course completion rates in real-time." },
+        { icon: Shield, title: "Content Protection", desc: "Enterprise-grade security prevents unauthorized downloading and sharing of your content." },
+    ];
+
+    return (
+        <motion.main
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="pt-32 pb-24"
+        >
+            <div className="mx-auto max-w-4xl px-6 text-center mb-24">
+                <Badge className="mb-8">Simple Pricing</Badge>
+                <h1 className="mb-6 text-5xl font-medium tracking-tight text-white sm:text-7xl">
+                    One platform. <br />
+                    <span className="text-zinc-500">No surprise fees.</span>
+                </h1>
+                <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+                    Because Ethiopian payment gateways don't support auto-renewing subscriptions, we offer simple prepaid passes. Pay once, build your empire, and renew when you're ready.
+                </p>
+            </div>
+
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="grid gap-8 md:grid-cols-3 items-stretch">
+                    <PricingCard months={1} price="1,500" title="Starter" desc="Perfect for testing the waters and launching your first course." />
+                    <PricingCard months={6} price="8,000" title="Growth" desc="Build momentum and scale your community." highlighted save="11%" />
+                    <PricingCard months={12} price="15,000" title="Sovereign" desc="For serious creators building a permanent digital business." save="16%" />
+                </div>
+            </div>
+
+            {/* 0% Fee Banner */}
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-emerald-500/5 px-8 py-16 text-center md:px-16 md:py-20">
+                    <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+                    <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+                    <div className="relative z-10">
+                        <h2 className="mb-4 text-4xl font-medium tracking-tight text-white sm:text-5xl">Keep 100% of your revenue.</h2>
+                        <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+                            We believe creators should keep what they earn. That's why we charge exactly <strong className="text-white">0% transaction fees</strong> on your course sales and community subscriptions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Included Features Grid */}
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="mb-16 text-center">
+                    <h2 className="text-3xl font-medium tracking-tight text-white sm:text-4xl">Everything you need, included.</h2>
+                    <p className="mt-4 text-zinc-400">No hidden add-ons. Every pass gives you full access to the entire HizbHub platform.</p>
+                </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {includedFeatures.map((feat, i) => (
+                        <div key={i} className="rounded-2xl border border-white/5 bg-zinc-900/50 p-6 transition-colors hover:bg-zinc-900">
+                            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
+                                <feat.icon className="h-5 w-5 text-white" />
+                            </div>
+                            <h3 className="mb-2 text-lg font-medium text-white">{feat.title}</h3>
+                            <p className="text-sm text-zinc-400">{feat.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mx-auto max-w-3xl px-6 mb-32">
+                <div className="mb-12 text-center">
+                    <h2 className="text-3xl font-medium tracking-tight text-white">Frequently asked questions</h2>
+                </div>
+                <div className="divide-y divide-white/5 border-y border-white/5">
+                    <FAQItem
+                        question="How do payments work without auto-renewal?"
+                        answer="Since local gateways like Telebirr don't currently support automatic recurring charges, you purchase a 'pass' for 1, 6, or 12 months. We'll notify you 7 days before your pass expires so you can easily renew without any interruption to your service."
+                    />
+                    <FAQItem
+                        question="Does HizbHub take a cut of my sales?"
+                        answer="No. We charge 0% transaction fees on your course sales and paid community memberships. You keep 100% of what you earn (standard Telebirr processing fees still apply)."
+                    />
+                    <FAQItem
+                        question="Can I upgrade my plan later?"
+                        answer="Yes! If you start with a 1-month pass and decide to upgrade to a 6-month or 1-year pass, you can do so at any time. The new duration will simply be added to your remaining time."
+                    />
+                    <FAQItem
+                        question="What happens to my data if my pass expires?"
+                        answer="Your community, courses, and member data are never deleted. If your pass expires, your hub will be temporarily paused until you renew, but no data will be lost."
+                    />
+                </div>
+            </div>
+
+            {/* Final CTA */}
+            <div className="mx-auto max-w-4xl px-6 text-center">
+                <h2 className="mb-6 text-4xl font-medium tracking-tight text-white">Ready to build your empire?</h2>
+                <p className="mb-8 text-lg text-zinc-400">Join top Ethiopian creators who are already monetizing their knowledge and communities on HizbHub.</p>
+                <button className="rounded-full bg-white px-8 py-4 text-base font-medium text-black transition-colors hover:bg-zinc-200">
+                    Start Your Hub Today
+                </button>
+            </div>
+        </motion.main>
+    );
+}
+
+function FeaturesPage() {
+    return (
+        <motion.main
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+        >
+            <Hero />
+
+            {/* Course System Deep Dive */}
+            <DeepDiveSection
+                badge="Education"
+                title="The Interactive Classroom"
+                description="Transition from scattered PDFs and unlisted YouTube videos to a structured, professional online academy. Control your content, brand, and student experience."
+                features={[
+                    {
+                        icon: FolderTree,
+                        title: "Structured Hierarchy",
+                        desc: "Organize your knowledge logically. Create folders for modules and pages for individual lessons."
+                    },
+                    {
+                        icon: BookOpen,
+                        title: "Rich Text Lessons",
+                        desc: "Deliver high-quality written content, embed resources, and guide your students step-by-step."
+                    },
+                    {
+                        icon: Lock,
+                        title: "Access Control",
+                        desc: "Offer free introductory courses to build your audience, or lock premium courses behind a paywall."
+                    }
+                ]}
+                imageContent={
+                    <div className="w-full max-w-sm space-y-4">
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+                            <div className="flex items-center gap-3 text-sm font-medium text-white mb-3">
+                                <FolderTree className="h-4 w-4 text-zinc-400" /> Module 1: The Basics
+                            </div>
+                            <div className="space-y-2 pl-7">
+                                <div className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white cursor-pointer transition-colors">
+                                    <BookOpen className="h-3.5 w-3.5" /> 1.1 Introduction
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white cursor-pointer transition-colors">
+                                    <BookOpen className="h-3.5 w-3.5" /> 1.2 Core Concepts
+                                </div>
+                            </div>
+                        </div>
+                        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 opacity-50">
+                            <div className="flex items-center gap-3 text-sm font-medium text-white">
+                                <FolderTree className="h-4 w-4 text-zinc-400" /> Module 2: Advanced
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
+            {/* Community System Deep Dive */}
+            <DeepDiveSection
+                reverse
+                badge="Engagement"
+                title="The Living Community"
+                description="Discussions happen right alongside your content. Foster a focused, professional environment where members can learn from you and each other without the distractions of a social media feed."
+                features={[
+                    {
+                        icon: MessageSquare,
+                        title: "Custom Channels",
+                        desc: "Create dedicated spaces for announcements, general chat, feedback, or specific cohorts."
+                    },
+                    {
+                        icon: Users,
+                        title: "Member Profiles",
+                        desc: "Build a culture of support. Members can interact, comment on posts, and build relationships."
+                    },
+                    {
+                        icon: Shield,
+                        title: "Zero Algorithm",
+                        desc: "Your reach isn't throttled. When you post an announcement, your entire community sees it."
+                    }
+                ]}
+                imageContent={
+                    <div className="w-full max-w-sm space-y-4">
+                        <div className="flex items-start gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 shrink-0" />
+                            <div>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-sm font-medium text-white">Creator</span>
+                                    <span className="text-xs text-zinc-500">Just now</span>
+                                </div>
+                                <p className="mt-1 text-sm text-zinc-300">Welcome to the new cohort! Please introduce yourselves in the general channel.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3 rounded-lg border border-zinc-800/50 bg-zinc-900/20 p-4 ml-8">
+                            <div className="h-8 w-8 rounded-full bg-zinc-800 shrink-0" />
+                            <div>
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-sm font-medium text-zinc-300">Student</span>
+                                    <span className="text-xs text-zinc-500">2m ago</span>
+                                </div>
+                                <p className="mt-1 text-sm text-zinc-400">Excited to be here! Looking forward to module 1.</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
+            {/* Monetization Deep Dive */}
+            <DeepDiveSection
+                badge="Monetization"
+                title="The Growth Engine"
+                description="Go from creator to business owner with built-in tools designed for the local market. Accept payments directly via Telebirr and manage subscriptions without the complexity of international gateways."
+                features={[
+                    {
+                        icon: CreditCard,
+                        title: "Dual Monetization",
+                        desc: "Charge monthly/yearly for community access, or sell standalone courses for a one-time fee."
+                    },
+                    {
+                        icon: Globe,
+                        title: "Telebirr Integration",
+                        desc: "Native integration with Ethiopia's leading mobile money platform. Automated verification and access control."
+                    },
+                    {
+                        icon: DollarSign,
+                        title: "Keep Your Revenue",
+                        desc: "Stop paying massive cuts to fragmented platforms. Build a sustainable, predictable income stream."
+                    }
+                ]}
+                imageContent={
+                    <div className="w-full max-w-sm rounded-xl border border-zinc-800 bg-black p-6 shadow-2xl">
+                        <div className="mb-6 flex items-center justify-between">
+                            <span className="text-sm font-medium text-zinc-400">Total Revenue</span>
+                            <Badge>This Month</Badge>
+                        </div>
+                        <div className="mb-8">
+                            <span className="text-4xl font-medium tracking-tight text-white">ETB 45,200</span>
+                            <span className="text-sm text-zinc-500">.00</span>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between rounded-lg bg-zinc-900/50 p-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                                    <span className="text-sm text-zinc-300">Community Subs</span>
+                                </div>
+                                <span className="text-sm font-medium text-white">ETB 25,000</span>
+                            </div>
+                            <div className="flex items-center justify-between rounded-lg bg-zinc-900/50 p-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-2 w-2 rounded-full bg-blue-500" />
+                                    <span className="text-sm text-zinc-300">Course Sales</span>
+                                </div>
+                                <span className="text-sm font-medium text-white">ETB 20,200</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
+
+            <CommandDashboard />
+            <CTA />
+        </motion.main>
+    );
+}
+
+function UseCasesPage() {
+    const useCases = [
+        {
+            icon: GraduationCap,
+            title: "Educators & Tutors",
+            description: "Move beyond chaotic Telegram groups. Host structured courses, provide downloadable resources, and run live Q&A sessions for ESSLCE prep or university tutoring.",
+            benefits: ["Structured curriculum", "Progress tracking", "Secure file sharing"]
+        },
+        {
+            icon: Camera,
+            title: "Content Creators",
+            description: "Turn your audience into a sustainable business. Offer exclusive behind-the-scenes content, ad-free videos, and a private community for your true fans.",
+            benefits: ["Direct monetization", "No algorithm dependency", "Deeper fan connection"]
+        },
+        {
+            icon: Code,
+            title: "Tech Bootcamps",
+            description: "Run cohort-based courses. Combine video lessons with a vibrant community where students can share code, ask questions, and network.",
+            benefits: ["Cohort management", "Peer-to-peer learning", "Resource libraries"]
+        },
+        {
+            icon: Briefcase,
+            title: "Consultants & Coaches",
+            description: "Package your expertise. Sell premium advisory content, host group coaching calls, and build a network of high-value clients.",
+            benefits: ["High-ticket sales", "Private networking", "Automated onboarding"]
+        },
+        {
+            icon: Dumbbell,
+            title: "Fitness Trainers",
+            description: "Build a digital gym. Share workout plans, nutrition guides, and keep your clients accountable in a private, supportive community.",
+            benefits: ["Video libraries", "Daily accountability", "Subscription revenue"]
+        },
+        {
+            icon: Palette,
+            title: "Creative Professionals",
+            description: "Share your craft. Teach photography, design, or writing through structured modules while building a community of aspiring artists.",
+            benefits: ["Portfolio showcases", "Constructive feedback", "Skill monetization"]
+        }
+    ];
+
+    return (
+        <motion.main
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="pt-32 pb-24"
+        >
+            <div className="mx-auto max-w-4xl px-6 text-center mb-24">
+                <Badge className="mb-8">Who is HizbHub for?</Badge>
+                <h1 className="mb-6 text-5xl font-medium tracking-tight text-white sm:text-7xl">
+                    Built for the next generation of <br />
+                    <span className="text-zinc-500">Ethiopian creators.</span>
+                </h1>
+                <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+                    Whether you're teaching code, sharing fitness routines, or building a premium community, HizbHub gives you the tools to monetize your knowledge natively.
+                </p>
+            </div>
+
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {useCases.map((uc, i) => (
+                        <div key={i} className="group relative overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/30 p-8 transition-all hover:bg-zinc-900/80 hover:border-white/10">
+                            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-800 bg-black text-zinc-400 group-hover:text-white group-hover:border-zinc-700 transition-colors">
+                                <uc.icon className="h-6 w-6" />
+                            </div>
+                            <h3 className="mb-4 text-2xl font-medium text-white">{uc.title}</h3>
+                            <p className="mb-8 text-zinc-400 leading-relaxed">{uc.description}</p>
+
+                            <div className="space-y-3">
+                                {uc.benefits.map((benefit, j) => (
+                                    <div key={j} className="flex items-center gap-3">
+                                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+                                            <Check className="h-3 w-3" />
+                                        </div>
+                                        <span className="text-sm font-medium text-zinc-300">{benefit}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* The Creator Journey */}
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="text-center mb-16">
+                    <Badge className="mb-6">How it works</Badge>
+                    <h2 className="text-3xl font-medium tracking-tight text-white sm:text-4xl mb-4">From audience to business in 3 steps</h2>
+                    <p className="text-zinc-400 text-lg">We've streamlined the path to monetization so you can focus on creating.</p>
+                </div>
+                <div className="grid gap-8 md:grid-cols-3 relative">
+                    {/* Connecting line for desktop */}
+                    <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+
+                    <div className="relative text-center pt-8">
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-zinc-800 bg-black text-white shadow-[0_0_30px_-10px_rgba(255,255,255,0.1)] relative z-10">
+                            <LayoutDashboard className="h-8 w-8" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-medium text-white">1. Build Your Hub</h3>
+                        <p className="text-zinc-400 leading-relaxed">Set up your branded space, upload your courses, and structure your community channels in minutes.</p>
+                    </div>
+
+                    <div className="relative text-center pt-8">
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-zinc-800 bg-black text-white shadow-[0_0_30px_-10px_rgba(255,255,255,0.1)] relative z-10">
+                            <Users className="h-8 w-8" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-medium text-white">2. Invite Your Audience</h3>
+                        <p className="text-zinc-400 leading-relaxed">Move your followers from chaotic social feeds into a focused, distraction-free private community.</p>
+                    </div>
+
+                    <div className="relative text-center pt-8">
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/20 bg-black text-emerald-500 shadow-[0_0_30px_-10px_rgba(16,185,129,0.2)] relative z-10">
+                            <DollarSign className="h-8 w-8" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-medium text-white">3. Start Earning</h3>
+                        <p className="text-zinc-400 leading-relaxed">Accept payments seamlessly via Telebirr, CBE Birr, and Chapa. Your revenue is completely automated.</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Comparison Section */}
+            <div className="mx-auto max-w-7xl px-6 mb-32">
+                <div className="rounded-3xl border border-white/5 bg-zinc-900/20 overflow-hidden">
+                    <div className="grid md:grid-cols-2">
+                        <div className="p-8 md:p-12 border-b md:border-b-0 md:border-r border-white/5">
+                            <h3 className="text-2xl font-medium text-white mb-2">The Old Way</h3>
+                            <p className="text-zinc-500 mb-8">Managing a business on basic chat apps</p>
+                            <ul className="space-y-4">
+                                {[
+                                    "Endless scrolling to find old resources",
+                                    "Manually checking Telebirr screenshots for payment",
+                                    "Piracy risks with easily forwardable files",
+                                    "No analytics or member insights",
+                                    "Chaotic group chats with no structure"
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-start gap-3 text-zinc-400">
+                                        <X className="h-5 w-5 text-red-400/70 shrink-0 mt-0.5" />
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="p-8 md:p-12 bg-emerald-950/10">
+                            <h3 className="text-2xl font-medium text-white mb-2">The HizbHub Way</h3>
+                            <p className="text-emerald-500/80 mb-8">A professional platform built for creators</p>
+                            <ul className="space-y-4">
+                                {[
+                                    "Structured curriculum and organized resource libraries",
+                                    "Automated subscription management and access control",
+                                    "Secure, non-downloadable video hosting",
+                                    "Deep analytics on member engagement and revenue",
+                                    "Organized community channels and direct messaging"
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-start gap-3 text-zinc-300">
+                                        <Check className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Final CTA */}
+            <div className="mx-auto max-w-4xl px-6 text-center">
+                <h2 className="mb-6 text-4xl font-medium tracking-tight text-white">See yourself here?</h2>
+                <p className="mb-8 text-lg text-zinc-400">Stop piecing together tools that weren't built for you. Start building your community on HizbHub today.</p>
+                <button className="rounded-full bg-white px-8 py-4 text-base font-medium text-black transition-colors hover:bg-zinc-200 inline-flex items-center gap-2">
+                    Start Your Free Trial <ArrowRight className="h-4 w-4" />
+                </button>
+            </div>
+        </motion.main>
+    );
+}
+
+export default function App() {
+    const [currentPage, setCurrentPage] = useState('use-cases');
+
+    return (
+        <div className="min-h-screen bg-black text-zinc-100 selection:bg-white/20 font-sans">
+            <Navbar currentPage={currentPage} setPage={setCurrentPage} />
+            <AnimatePresence mode="wait">
+                {currentPage === 'features' && <FeaturesPage key="features" />}
+                {currentPage === 'pricing' && <PricingPage key="pricing" />}
+                {currentPage === 'use-cases' && <UseCasesPage key="use-cases" />}
+            </AnimatePresence>
+            <Footer />
+        </div>
+    );
+}

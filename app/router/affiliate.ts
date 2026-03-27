@@ -1,9 +1,9 @@
 import { affiliateOnboardingFormSchema } from "@/zod-schema/affiliateOnboardingZodSchema";
 import { base } from "../middlewares/base";
-import { AffiliateCommissionSchema, affiliates, AffiliateSchema, creatorCodes, discountCodes, DiscountCodeScema, GroupSchema, linkClicks, users, UserSchema } from "@/db/schemas";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { AffiliateCommissionSchema, affiliates, AffiliateSchema, creatorCodes, discountCodes, DiscountCodeScema, linkClicks, users, UserSchema } from "@/db/schemas";
+import { auth } from "@clerk/nextjs/server";
 import db from "@/db/drizzle";
-import { count, eq, sql, sum } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { z } from "zod"
 import { requiredAuthMiddleware } from "../middlewares/auth";
 
@@ -17,7 +17,7 @@ export const createAffilate = base
     .input(affiliateOnboardingFormSchema.extend({ creatorCode: z.string() }))
     .output(AffiliateSchema)
     .handler(async ({ input, errors }) => {
-        const { referralCode, telebirr, creatorCode } = input;
+        const { telebirr, creatorCode } = input;
 
         const { userId } = await auth();
         if (!userId) throw errors.UNAUTHORIZED();
@@ -69,15 +69,6 @@ export const createAffilate = base
 
         return finalAffiliate;
     })
-
-// affiliate: dbAffiliate,
-// discountCode: dbDiscount,
-// stats: {
-//     totalClicks: clickStats.count,
-//     totalSignups: signupStats.count,
-//     totalEarned: dbAffiliate.totalEarned,
-//     totalSale: dbAffiliate.totalSale
-// },
 
 const getCurrentUserAffiliateDataOutput = z.object({
     affiliate: AffiliateSchema.extend({

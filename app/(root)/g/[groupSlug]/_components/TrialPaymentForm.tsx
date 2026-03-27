@@ -17,6 +17,9 @@ import { DiscountVerification } from "@/zod-schema/discountVerificationSchema";
 import { useCurrentGroupQuery } from "./hooks/useCurrentGroupQuery";
 import { paymentFormSchema, paymentFormSchemaTypes } from "@/zod-schema/paymentZodSchema";
 import { DiscountCodeButton } from "@/app/(root)/create-group/_components/PricingDialog/DiscountCode";
+import { Badge } from "@/components/ui/badge";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight, Check } from "@hugeicons/core-free-icons";
 
 export const TrialPaymentForm = () => {
     const { groupSlug } = useParams<{ groupSlug: string }>()
@@ -108,13 +111,17 @@ export const TrialPaymentForm = () => {
     return (
         <div>
             {step === "pricing" ? (
-                <div className="flex flex-col items-center w-full min-h-[500px] relative">
-                    <div className="text-center space-y-1 mb-8">
-                        <p className="text-3xl font-light tracking-wide">
-                            choose plan
-                        </p>
-                        <p className="text-sm text-neutral-500 font-extralight tracking-wider">
-                            small text with muted color
+                <div className="flex flex-col items-center w-full min-h-[550px] relative py-10 px-6">
+                    {/* Background Glow for Focus */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 blur-[120px] pointer-events-none" />
+
+                    {/* Header */}
+                    <div className="text-center mb-12 relative z-10">
+                        <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">
+                            Choose your <span className="text-emerald-500">growth plan</span>
+                        </h2>
+                        <p className="text-sm text-zinc-500 font-medium tracking-wide uppercase tracking-[0.15em]">
+                            Select the perfect fit for your community
                         </p>
                     </div>
 
@@ -123,62 +130,76 @@ export const TrialPaymentForm = () => {
                         value={selectedPlan?.id}
                         onValueChange={(val) => {
                             const nextPlan = plans?.find(p => p.id === val)
-                            if (nextPlan) {
-                                setSelectedPlan(nextPlan)
-                            }
+                            if (nextPlan) setSelectedPlan(nextPlan)
                         }}
-                        className="mb-8"
+                        className="mb-12 relative z-10"
                     >
-                        <TabsList className="rounded-full bg-neutral-800 p-0.5 border border-neutral-700 transition-all duration-300">
+                        <TabsList className="h-12 rounded-full bg-zinc-900 border border-zinc-800 p-1.5 shadow-2xl backdrop-blur-md">
                             {plans?.map(plan => (
                                 <TabsTrigger
                                     key={plan.id}
                                     value={plan.id}
-                                    // Adjusted styling for prototype feel
-                                    className="rounded-full text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-black h-8 px-4 py-0 transition-all duration-300"
+                                    className="rounded-full px-8 text-xs font-bold uppercase tracking-widest transition-all duration-300
+                               data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-lg
+                               text-zinc-500 hover:text-zinc-300"
                                 >
-                                    {plan.name.replace(" ", "\u00A0")} {/* Use non-breaking space */}
+                                    {plan.name.replace(" ", "\u00A0")}
                                 </TabsTrigger>
                             ))}
                         </TabsList>
                     </Tabs>
 
-                    {/* Pricing Card: Central element with minimal design */}
-                    <div className="flex flex-col items-center text-center w-full max-w-sm">
-                        {/* Using key to force re-render and trigger a quick opacity transition */}
-                        <h2
-                            key={selectedPlan?.name} // Key change for transition
-                            className="text-2xl font-light transition-opacity duration-200 opacity-100 animate-fadeIn"
+                    {/* Pricing Card: Central Display */}
+                    <div className="flex flex-col items-center text-center w-full max-w-sm relative z-10">
+                        {/* Plan Name */}
+                        <Badge variant="outline"
+                            key={`badge-${selectedPlan?.name}`}
+                            className="mb-6 border-emerald-500/20 bg-emerald-500/5 text-emerald-500 animate-fadeIn"
                         >
-                            {selectedPlan?.name}
-                        </h2>
+                            {selectedPlan?.name} Edition
+                        </Badge>
 
-                        {/* Price: Large, prominent, with transition */}
-                        <div className="text-6xl font-extralight mt-2 mb-8 transition-opacity duration-200 opacity-100 animate-fadeIn">
-                            {formattedPrice}
+                        {/* Price Display */}
+                        <div key={`price-${formattedPrice}`} className="flex items-baseline gap-2 mb-10 animate-fadeIn">
+                            <span className="text-7xl font-bold tracking-tighter text-white">
+                                {formattedPrice}
+                            </span>
+                            <span className="text-zinc-500 font-medium italic">/access</span>
                         </div>
 
-                        {/* Feature List: Simpler, centered, matching prototype's minimal list */}
-                        <ul className="mt-2 space-y-4 text-center text-base text-neutral-300 font-light tracking-wide">
-                            <li>Unlimited product uploads</li>
-                            <li>Customizable store theme</li>
-                            <li>Analytics dashboard</li>
-                            <li>24/7 support</li>
+                        {/* Feature List: Refined with Shields */}
+                        <ul className="space-y-5 text-left w-full mb-12">
+                            {[
+                                "Unlimited product uploads",
+                                "Customizable store theme",
+                                "Advanced Analytics dashboard",
+                                "Priority 24/7 support"
+                            ].map((feature, i) => (
+                                <li key={i} className="flex items-center gap-4 text-[15px] text-zinc-400 font-light group">
+                                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 group-hover:border-emerald-500/30 transition-colors">
+                                        <HugeiconsIcon icon={Check} className="h-3 w-3 text-emerald-500" />
+                                    </div>
+                                    {feature}
+                                </li>
+                            ))}
                         </ul>
 
-                        {/* Get It Now Button */}
-                        <Button
+                        {/* Call to Action */}
+                        <button
                             onClick={handleStart}
-                            className="
-                                        mt-10 rounded-lg 
-                                        bg-white text-black 
-                                        hover:bg-neutral-200 transition-colors 
-                                        font-medium 
-                                        shadow-lg shadow-neutral-700/50
-                                    "
+                            className="group relative w-full rounded-2xl bg-white py-5 text-sm font-bold text-black 
+                       transition-all hover:bg-zinc-100 hover:scale-[1.02] active:scale-[0.98] 
+                       shadow-[0_20px_40px_-10px_rgba(255,255,255,0.1)]"
                         >
-                            Get it now
-                        </Button>
+                            <span className="flex items-center justify-center gap-2">
+                                Get Started Now
+                                <HugeiconsIcon icon={ArrowRight} className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </span>
+                        </button>
+
+                        <p className="mt-6 text-[11px] text-zinc-600 font-bold uppercase tracking-[0.2em]">
+                            Secure checkout via Chapa & Telebirr
+                        </p>
                     </div>
                 </div>
             ) : (

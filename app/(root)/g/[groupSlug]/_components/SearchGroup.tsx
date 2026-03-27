@@ -44,7 +44,7 @@ export function SearchGroup({ ownedGroups, joinedGroups }: GroupSearchProps) {
                         <DialogTitle>Settings</DialogTitle>
                     </DialogHeader>
                 </VisuallyHidden>
-                <DialogContent className="z-[80] max-w-[640px] p-0 overflow-hidden" onInteractOutside={(e) => e.preventDefault()}>
+                <DialogContent className="z-80 max-w-[640px] p-0 overflow-hidden" onInteractOutside={(e) => e.preventDefault()}>
                     <Command className="w-full">
                         <CommandInput placeholder="Type to search..." />
                         <CommandList>
@@ -55,7 +55,7 @@ export function SearchGroup({ ownedGroups, joinedGroups }: GroupSearchProps) {
                                         <div
                                             className={cn(
                                                 "relative flex items-center justify-center size-10 rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                                                getGroupColor(ownedGroup.id), // Apply the background color
+                                                ownedGroup.icon ? "" : getGroupColor(ownedGroup.id), // Apply the background color
                                             )}
                                         >
                                             {ownedGroup.icon ? (

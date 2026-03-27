@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle } from "@hugeicons/core-free-icons"
-import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { usePricing } from "./PricingContext"
 import { SkipToTrail } from "./SkipToTrial"
@@ -10,7 +9,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 
 export const PricingList = () => {
-    const { selectedPlan, open, setSelectedPlan, plans, setStep, formattedPrice } = usePricing()
+    const { selectedPlan, setSelectedPlan, plans, setStep, formattedPrice } = usePricing()
 
     const handleStart = async () => {
         if (!selectedPlan) {

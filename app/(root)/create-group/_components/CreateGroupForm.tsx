@@ -3,14 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
     Field,
     FieldDescription,
     FieldError,
@@ -30,10 +22,6 @@ import { createGroupFormSchema, CreateGroupFormTypes } from "@/zod-schema/create
 import CategorySelector from "@/components/CategorySelector"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-// import { PricingDialog } from "./PricingDialog/PricingDialog"
-import { PricingProvider } from "./PricingDialog/PricingContext"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { orpc } from "@/lib/orpc"
 import dynamic from "next/dynamic"
 
 const PricingDialog = dynamic(
@@ -119,7 +107,7 @@ export const CreateGroupForm = () => {
                                         />
                                         <InputGroupAddon align="block-end" className="p-2 ">
                                             <InputGroupText className="tabular-nums text-xs text-muted-foreground font-mono uppercase tracking-tighter">
-                                                {field.value.length} / 100
+                                                {field.value.length} / 200
                                             </InputGroupText>
                                         </InputGroupAddon>
                                     </InputGroup>

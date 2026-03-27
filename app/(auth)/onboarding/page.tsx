@@ -8,7 +8,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { onboardingSchema } from "@/zod-schema/onboardingZodSchema"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
     Card,
     CardContent,
@@ -19,7 +18,6 @@ import {
 } from "@/components/ui/card"
 import {
     Field,
-    FieldDescription,
     FieldError,
     FieldGroup,
     FieldLabel,
@@ -66,7 +64,7 @@ export default function OnboardingComponent() {
                     // Force Clerk to refresh the session token with new metadata
                     await user.reload();
                 } catch (err) {
-                    console.error("Failed to reload user session:", err);
+                    toast.error("Failed to reload user session");
                 }
             }
 

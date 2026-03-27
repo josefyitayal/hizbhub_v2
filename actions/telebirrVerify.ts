@@ -1,6 +1,6 @@
 "use server"
 
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export const telebirrVerify = async (reference: string) => {
     try {

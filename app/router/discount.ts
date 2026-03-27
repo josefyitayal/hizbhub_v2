@@ -3,7 +3,6 @@ import db from "@/db/drizzle";
 import { and, eq } from "drizzle-orm";
 import { requiredAuthMiddleware } from "../middlewares/auth";
 import { base } from "../middlewares/base";
-import { MergedErrorMap, ORPCErrorConstructorMap } from "@orpc/server";
 import { DiscountVerification, discountVerificationSchema } from "@/zod-schema/discountVerificationSchema";
 import { Affiliate, DiscountCode, discountCodes, Plan, plans } from "@/db/schemas";
 import { errorsType } from "@/types/globals";

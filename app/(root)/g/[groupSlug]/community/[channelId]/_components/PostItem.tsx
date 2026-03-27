@@ -3,14 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { getAvatar } from "@/lib/get-avatar";
 import Image from "next/image";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
-import dynamic from 'next/dynamic';
-import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { cn } from "@/lib/utils";
-import { useUser } from "@clerk/nextjs";
-import { Loader, MessageCircle, Pin, ThumbsUp } from "@hugeicons/core-free-icons";
+import { MessageCircle, Pin, ThumbsUp } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { usePostLike } from "./hooks/usePostLike";
 import { PostMenuDropdown } from "./DeletePost";
@@ -27,7 +23,6 @@ export interface PostItemProps {
 }
 
 export function PostItem({ channelId, groupId, post, isUserOwned }: PostItemProps) {
-    const { user: clerkUser } = useUser()
     const router = useRouter();
     const params = useSearchParams();
 

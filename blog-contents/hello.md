@@ -124,6 +124,4 @@ Welcome to Hizbhub.
 
 ### ✦ Ready to start?
 
-[Start your Hub →](http://localhost:3000/create-group)
-
 ---

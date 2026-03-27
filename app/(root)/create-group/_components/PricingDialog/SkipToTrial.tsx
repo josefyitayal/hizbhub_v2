@@ -7,13 +7,9 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { usePricing } from "./PricingContext"
 
-type SkipToTrailProps = {
-    selectedPlan: Plan | null,
-}
-
 export const SkipToTrail = () => {
     const queryClient = useQueryClient()
-    const { selectedPlan, groupForm, open, setOpen, setSelectedPlan, plans, setStep, formattedPrice } = usePricing()
+    const { selectedPlan, groupForm, setOpen, setStep } = usePricing()
     const router = useRouter()
 
     const trialMutation = useMutation(orpc.payment.startTrial.mutationOptions({

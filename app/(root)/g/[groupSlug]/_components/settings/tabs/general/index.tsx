@@ -20,6 +20,7 @@ import { generalSettingsFormSchema } from "@/zod-schema/settingsZodSchema"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
+import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group"
 
 export type GeneralSettingsFormInput = z.input<typeof generalSettingsFormSchema>;
 export type GeneralSettingsFormOutput = z.infer<typeof generalSettingsFormSchema>;
@@ -79,9 +80,7 @@ export function GeneralSetting({ groupId }: { groupId: string }) {
             ) : (
                 <div>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit, (errors) => {
-                            console.log("FORM ERRORS ❌", errors)
-                        })}
+                        onSubmit={form.handleSubmit(onSubmit)}
                         className="w-full px-10 flex flex-col gap-4"
                     >
                         <FieldGroup>
@@ -116,14 +115,22 @@ export function GeneralSetting({ groupId }: { groupId: string }) {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel htmlFor="form-description">Description</FieldLabel>
-                                        <Textarea
-                                            value={field.value ?? ""}
-                                            onChange={(e) => field.onChange(e.target.value)}
-                                            id="form-description"
-                                            aria-invalid={fieldState.invalid}
-                                            placeholder="Short description"
-                                            className="w-full"
-                                        />
+                                        <InputGroup>
+                                            <InputGroupTextarea
+                                                value={field.value ?? ""}
+                                                onChange={(e) => field.onChange(e.target.value)}
+                                                id="form-description"
+                                                aria-invalid={fieldState.invalid}
+                                                placeholder="Short description"
+                                                className="w-full"
+                                            />
+
+                                            <InputGroupAddon align="block-end" className="p-2 ">
+                                                <InputGroupText className="tabular-nums text-xs text-muted-foreground font-mono uppercase tracking-tighter">
+                                                    {field.value?.length} / 200
+                                                </InputGroupText>
+                                            </InputGroupAddon>
+                                        </InputGroup>
                                         {fieldState.error && (
                                             <p className="text-sm text-red-500">
                                                 {fieldState.error.message}
@@ -219,7 +226,7 @@ export function GeneralSetting({ groupId }: { groupId: string }) {
                                 )}
                             />
                         </FieldGroup>
-                        <Button type="submit" onClick={() => console.log("from the button")} disabled={updateGeneralSettingsMutation.isPending}>
+                        <Button type="submit" disabled={updateGeneralSettingsMutation.isPending}>
                             {updateGeneralSettingsMutation.isPending ? "Saving..." : "Save"}
                         </Button>
                     </form>
