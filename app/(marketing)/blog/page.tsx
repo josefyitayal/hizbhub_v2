@@ -4,6 +4,12 @@ import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight } from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Hizbhub Blog - Community, Business & Growth Tips",
+    description: "Learn how to grow and monetize your community with tips, guides, and insights from Hizbhub.",
+};
 
 export default async function BlogPage() {
     const posts = await getAllPosts();

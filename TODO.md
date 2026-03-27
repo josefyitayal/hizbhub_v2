@@ -21,3 +21,6 @@
 [x] in course creation description field the limited character diplayed is not correct
 [x] trial groups private need to be false and user can not change that as long as there are trial
 
+[x] features, use cases, pricing are not public pages
+[x] all hizbhub need besic seo like changing the title and shit
+[x] the cta main button is not working. there is not redirect

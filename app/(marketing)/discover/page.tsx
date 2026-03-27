@@ -2,14 +2,6 @@
 
 import Image from "next/image";
 import { Filter, SearchIcon, Users, X, Plus, ArrowRight } from "@hugeicons/core-free-icons";          // for member icon
-import {
-    Empty,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-    EmptyDescription,
-    EmptyContent,
-} from "@/components/ui/empty";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategorySelector from "@/components/CategorySelector";

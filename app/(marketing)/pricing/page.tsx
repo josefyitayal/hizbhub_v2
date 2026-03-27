@@ -1,11 +1,15 @@
-"use client"
 
 import { Badge } from "@/components/ui/badge";
 import { BarChart, BookOpen, CreditCard, GlobeFreeIcons, Shield, Users } from "@hugeicons/core-free-icons";
-import { motion, AnimatePresence } from 'framer-motion';
 import { PricingCard } from "./_components/PricingCard";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { FAQItem } from "./_components/FAQItem";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Pricing - Affordable Plans for Communities | Hizbhub",
+    description: "Choose a simple and affordable pricing plan to create and grow your community with Hizbhub.",
+};
 
 export default function PricingPage() {
     const includedFeatures = [
@@ -18,11 +22,7 @@ export default function PricingPage() {
     ];
 
     return (
-        <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+        <div
             className="pt-32 pb-24 bg-background"
         >
             <div className="mx-auto max-w-4xl px-6 text-center mb-24">
@@ -165,6 +165,6 @@ export default function PricingPage() {
                     Start Your Hub Today
                 </button>
             </div>
-        </motion.main>
+        </div>
     );
 }

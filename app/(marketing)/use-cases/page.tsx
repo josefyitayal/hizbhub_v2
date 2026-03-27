@@ -1,9 +1,12 @@
-"use client"
-
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Briefcase, Camera, Check, Code, DollarSign, Dumbbell, GraduationCap, LayoutDashboard, Palette, Users, X } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { motion, AnimatePresence } from 'framer-motion';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Use Cases - How Creators Use Hizbhub to Earn | Hizbhub",
+    description: "See how creators, educators, and businesses use Hizbhub to build and monetize communities.",
+};
 
 export default function UseCasesPage() {
     const useCases = [
@@ -46,11 +49,7 @@ export default function UseCasesPage() {
     ];
 
     return (
-        <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+        <div
             className="pt-32 pb-24 bg-background"
         >
             <div className="mx-auto max-w-4xl px-6 text-center mb-24">
@@ -258,6 +257,6 @@ export default function UseCasesPage() {
                     </div>
                 </div>
             </section>
-        </motion.main>
+        </div>
     );
 }

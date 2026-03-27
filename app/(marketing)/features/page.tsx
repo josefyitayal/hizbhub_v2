@@ -1,22 +1,20 @@
-"use client"
-
 import { BookOpen, CreditCard, DollarSign, FolderIcon, FolderOpen, FolderTransferIcon, Globe, LockIcon, MessageSquare, Shield, Users } from "@hugeicons/core-free-icons";
 import { DeepDiveSection } from "./_components/DeepDiveSection";
 import { FeaturesHero } from "./_components/FeaturesHero";
-import { motion, AnimatePresence } from 'framer-motion';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@/components/ui/badge";
 import { CommandDashboard } from "./_components/CommandDashboard";
 import { FeaturesCta } from "./_components/FeaturesCta";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Features - Create, Manage & Monetize Communities | Hizbhub",
+    description: "Explore Hizbhub features: create communities, manage members, accept payments, and grow your audience with ease.",
+};
 
 export default function FeaturesPage() {
     return (
-        <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-        >
+        <div>
             <FeaturesHero />
 
             {/* Course System Deep Dive */}
@@ -168,6 +166,6 @@ export default function FeaturesPage() {
 
             <CommandDashboard />
             <FeaturesCta />
-        </motion.main>
+        </div>
     )
 }
